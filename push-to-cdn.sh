@@ -20,8 +20,8 @@ git add $1
 
 if [[ $1 != *-* ]]; # if version has no hyphen (as in "3.0.0-alpha")
 then
-	ln -Ffs $1 demo
-	ln -Ffs $1/doc doc
+	rm demo; ln -s $1 demo
+	rm doc; ln -s $1/doc doc
 fi
 
 git commit -m $1

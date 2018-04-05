@@ -9,15 +9,13 @@ var days = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '1
 var states = ['', 'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'];
 
 var randomFunc = Math.random;
-//var randomFunc = rnd;
 
 var rnd = function (max) {
     return Math.floor(randomFunc() * max);
-}
+};
 
 var randomPerson = function() {
     var firstName = Math.round((firstNames.length - 1) * randomFunc());
-    //var lastName = 'a' + randomFunc() + 'b';
     var lastName = Math.round((lastNames.length - 1) * randomFunc());
     var pets = Math.round(10 * randomFunc());
     var height = 50 + Math.round(40 * randomFunc());
@@ -32,21 +30,14 @@ var randomPerson = function() {
     var employed = Math.round(randomFunc());
 
     //Use this to test Sparkline or Sparkbar
-    var sparkData =  (function () {
-        var barRandomOffsets = [];
-        //for (var i = 0; i < 20; i++) {
-        //    barRandomOffsets.push([]);
+    var sparkData =  [];
+    for (var r = 0; r < 10; r++) {
+        sparkData.push(10 - rnd(20));
+    }
 
-        for (var r = 0; r < 10; r++) {
-            barRandomOffsets.push(10 - rnd(20));
-        }
-        //}
-        return barRandomOffsets
-    })()
-    var sliderData = Math.round(randomFunc() * 11);
     var person = {
-        last_name: lastNames[lastName], //jshint ignore:line
-        first_name: firstNames[firstName], //jshint ignore:line
+        last_name: lastNames[lastName],
+        first_name: firstNames[firstName],
         total_number_of_pets_owned: pets,
         height: height,
         birthDate: new Date(birthyear + '-' + months[birthmonth] + '-' + days[birthday]),
@@ -58,8 +49,8 @@ var randomPerson = function() {
         travel: travel,
         squareOfIncome: 0,
 
-        one_last_name: lastNames[lastName], //jshint ignore:line
-        one_first_name: firstNames[firstName], //jshint ignore:line
+        one_last_name: lastNames[lastName],
+        one_first_name: firstNames[firstName],
         one_pets: pets,
         one_height: height,
         one_birthDate: birthyear + '-' + months[birthmonth] + '-' + days[birthday],
@@ -71,8 +62,8 @@ var randomPerson = function() {
         one_travel: travel,
         one_squareOfIncome: 0,
 
-        two_last_name: lastNames[lastName], //jshint ignore:line
-        two_first_name: firstNames[firstName], //jshint ignore:line
+        two_last_name: lastNames[lastName],
+        two_first_name: firstNames[firstName],
         two_pets: pets,
         two_height: height,
         two_birthDate: birthyear + '-' + months[birthmonth] + '-' + days[birthday],
@@ -84,8 +75,8 @@ var randomPerson = function() {
         two_travel: travel,
         two_squareOfIncome: 0,
 
-        three_last_name: lastNames[lastName], //jshint ignore:line
-        three_first_name: firstNames[firstName], //jshint ignore:line
+        three_last_name: lastNames[lastName],
+        three_first_name: firstNames[firstName],
         three_pets: pets,
         three_height: height,
         three_birthDate: birthyear + '-' + months[birthmonth] + '-' + days[birthday],
@@ -97,8 +88,8 @@ var randomPerson = function() {
         three_travel: travel,
         three_squareOfIncome: 0,
 
-        four_last_name: lastNames[lastName], //jshint ignore:line
-        four_first_name: firstNames[firstName], //jshint ignore:line
+        four_last_name: lastNames[lastName],
+        four_first_name: firstNames[firstName],
         four_pets: pets,
         four_height: height,
         four_birthDate: birthyear + '-' + months[birthmonth] + '-' + days[birthday],
@@ -110,8 +101,8 @@ var randomPerson = function() {
         four_travel: travel,
         four_squareOfIncome: 0,
 
-        five_last_name: lastNames[lastName], //jshint ignore:line
-        five_first_name: firstNames[firstName], //jshint ignore:line
+        five_last_name: lastNames[lastName],
+        five_first_name: firstNames[firstName],
         five_pets: pets,
         five_height: height,
         five_birthDate: birthyear + '-' + months[birthmonth] + '-' + days[birthday],
@@ -123,8 +114,8 @@ var randomPerson = function() {
         five_travel: travel,
         five_squareOfIncome: 0,
 
-        six_last_name: lastNames[lastName], //jshint ignore:line
-        six_first_name: firstNames[firstName], //jshint ignore:line
+        six_last_name: lastNames[lastName],
+        six_first_name: firstNames[firstName],
         six_pets: pets,
         six_height: height,
         six_birthDate: birthyear + '-' + months[birthmonth] + '-' + days[birthday],
@@ -136,8 +127,8 @@ var randomPerson = function() {
         six_travel: travel,
         six_squareOfIncome: 0,
 
-        seven_last_name: lastNames[lastName], //jshint ignore:line
-        seven_first_name: firstNames[firstName], //jshint ignore:line
+        seven_last_name: lastNames[lastName],
+        seven_first_name: firstNames[firstName],
         seven_pets: pets,
         seven_height: height,
         seven_birthDate: birthyear + '-' + months[birthmonth] + '-' + days[birthday],
@@ -149,8 +140,8 @@ var randomPerson = function() {
         seven_travel: travel,
         seven_squareOfIncome: 0,
 
-        eight_last_name: lastNames[lastName], //jshint ignore:line
-        eight_first_name: firstNames[firstName], //jshint ignore:line
+        eight_last_name: lastNames[lastName],
+        eight_first_name: firstNames[firstName],
         eight_pets: pets,
         eight_height: height,
         eight_birthDate: birthyear + '-' + months[birthmonth] + '-' + days[birthday],
@@ -164,7 +155,7 @@ var randomPerson = function() {
     };
     person.squareOfIncome = function() {
         return Math.sqrt(person.income);
-    }
+    };
     return person;
 };
 

@@ -22,31 +22,18 @@ var fin = window.fin = window.fin || {};
 // Create the `fin.Hypergrid` object, which serves both as a "class" (constructor) and a namespace:
 var Hypergrid = fin.Hypergrid = require('fin-hypergrid');
 
-// Install the module loader
+// Install the module loader which uses `Hypergrid.modules` defined in fin-hypergrid/src/Hypergrid/modules.js
 Hypergrid.require = require('./module-loader');
 
 // Install `src` the internal module namespace which is for the build file only
 Hypergrid.src = {};
 
-// Note: At this point, `Hypergrid.modules`, the external module namespace, has already
-// been installed by ./Hypergrid/index.js (for both npm and build modules).
-
-// Install implicit modules which are external modules but are not overridable so non-configurable, non-writable
-Object.defineProperties(Hypergrid.modules, {
-    'datasaur-base': { value: require('datasaur-base') }, // may be removed in a future release
-    'datasaur-local': { value: require('datasaur-local') }, // may be removed in a future release
-    'extend-me': {value: require('extend-me') },
-    'object-iterators': { value: require('object-iterators') },
-    overrider: { value: require('overrider') },
-    rectangular: { value: require('rectangular') },
-    'sparse-boolean-array': { value: require('sparse-boolean-array') }
-});
+// Note: At this point,
 
 // Install internal modules may not be overridden so non-configurable, non-writable
 Object.defineProperties(Hypergrid.src, {
     lib: { value: require('fin-hypergrid/src/lib') },
     behaviors: { value: require('fin-hypergrid/src/behaviors') },
-    dataModels: { value: require('fin-hypergrid/src/dataModels') },
     features: { value: require('fin-hypergrid/src/features') },
     Base: { value: require('fin-hypergrid/src/Base') },
     defaults: { value: require('fin-hypergrid/src/defaults') }
@@ -72,6 +59,7 @@ function deprecated(key, registry) {
             warning = 'Reference to ' + key + ' internal modules using' +
                 ' `Hypergrid.' + key + '.modulename` has been deprecated as of v3.0.0 in favor of' +
                 ' `Hypergrid.require(\'' + requireString + '/modulename\')` and will be removed in a future release.' +
+                ' (Note however that ' + requireString + '/dataModels has been removed entirely and is no longer a module.)' +
                 ' See https://github.com/fin-hypergrid/core/wiki/Client-Modules#predefined-modules.';
             break;
 

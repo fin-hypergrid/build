@@ -1,4 +1,4 @@
-## fin-hypergrid-bundle
+## fin-hypergrid/build
 
 ### Contents
 

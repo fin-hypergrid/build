@@ -4,6 +4,7 @@
   "description": "Hypergrid Build & Demos",
   "main": "fin-hypergrid/index.js",
   "scripts": {
+    "build": "sh build.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,7 +18,7 @@
   },
   "homepage": "https://github.com/fin-hypergrid/build#readme",
   "dependencies": {
-    "fin-hypergrid": "file:../fin-hypergrid",
+    "fin-hypergrid": "fin-hypergrid/core#3.0.0-alpha-3.7.0",
     "fin-hypergrid-event-logger": "^1.0.4"
   }
 }

@@ -18,9 +18,9 @@ dest=$2/$base.hypermod.js
 
 echo '(function(require, module, exports, Hypergrid) {' > $dest
 cat $1 >> $dest
-echo '})(fin.Hypergrid.require, fin.Hypergrid.modules, fin.Hypergrid.modules.exports = {}, fin.Hypergrid);' >> $dest
-echo 'fin.Hypergrid.modules.'$base' = fin.Hypergrid.modules.exports;' >> $dest
-echo 'delete fin.Hypergrid.modules.exports;' >> $dest
+echo '})(fin.Hypergrid.require, fin.Hypergrid.modules, fin.$x = {}, fin.Hypergrid);' >> $dest
+echo 'fin.Hypergrid.modules.'$base' = fin.$x;' >> $dest
+echo 'delete fin.$x;' >> $dest
 
 uglifyjs $dest -cmo $2/$base.hypermod.min.js
 

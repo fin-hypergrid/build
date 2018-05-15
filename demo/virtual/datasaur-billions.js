@@ -1,6 +1,6 @@
 (function(Hypergrid) {
     var COLUMNS = 1000, // Math.pow(26, 1) + Math.pow(26, 2), // A..ZZ
-        ROWS = 5000000;
+        ROWS = 5000;
 
     Hypergrid.modules.DatasaurMillions = Hypergrid.require('datasaur-local').extend('DatasaurMillions',  {
 
@@ -30,8 +30,13 @@
                 }
             });
             document.getElementById('cached-rows-count').innerHTML = this.cachedRowCount += acc;
-            if (callback) {
-                callback.call(this);
+            if (callback && Math.random() > parseInt('0' + document.getElementById('failure-rate').value) / 100) {
+                var latency = parseInt('0' + document.getElementById('latency').value);
+                if (latency) {
+                    setTimeout(callback.bind(this), latency);
+                } else {
+                    callback.call(this);
+                }
             }
         },
 

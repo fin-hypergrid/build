@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/fin-hypergrid/build#readme",
   "dependencies": {
-    "fin-hypergrid": "fin-hypergrid/core#3.0.0-alpha-3.7.0",
+    "fin-hypergrid": "fin-hypergrid/core#alpha",
     "fin-hypergrid-event-logger": "^1.0.4"
   }
 }

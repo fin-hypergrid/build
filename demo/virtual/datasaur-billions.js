@@ -31,6 +31,38 @@
             }
         },
 
+        // return true for all data fetched, false if any data missing
+        gotData: function(rects) {
+            var data = this.data,
+                schema = this.schema;
+
+            // for better performance, we first
+            // (1) check all rects for any missing rows before
+            // (2) checking rows for any missing cells
+            return !(
+                rects.find(function(rect) { // (1)
+                    for (var y = rect.origin.y, Y = rect.corner.y; y < Y; ++y) {
+                        var dataRow = data[y];
+                        if (!dataRow) {
+                            return true;
+                        }
+                    }
+                })
+                ||
+                rects.find(function(rect) { // (2)
+                    for (var y = rect.origin.y, Y = rect.corner.y; y < Y; ++y) {
+                        var dataRow = data[y];
+                        for (var x = rect.origin.x, X = rect.corner.x; x < X; ++x) {
+                            if (!(schema[x].name in dataRow)) {
+                                return true;
+                            }
+                        }
+                    }
+                })
+            );
+        },
+
+
         setSchema: function(newSchema){
             if (!newSchema.length) {
                 var schema = this.schema = Array(COLUMNS);
@@ -66,14 +98,14 @@
             schema = this.schema,
             rows = 0;
 
-        rects.forEach(function(rectangle) {
-            for (var y = rectangle.origin.y, Y = rectangle.corner.y; y < Y; ++y) {
+        rects.forEach(function(rect) {
+            for (var y = rect.origin.y, Y = rect.corner.y; y < Y; ++y) {
                 var dataRow = data[y];
                 if (!dataRow) {
                     dataRow = data[y] = {};
                     rows += 1;
                 }
-                for (var x = rectangle.origin.x, X = rectangle.corner.x; x < X; ++x) {
+                for (var x = rect.origin.x, X = rect.corner.x; x < X; ++x) {
                     var name = schema[x].name;
                     dataRow[name] = name + ':' + y;
                 }

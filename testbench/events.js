@@ -6,7 +6,7 @@ module.exports = function() {
         grid = demo.grid;
 
     grid.addEventListener('fin-button-pressed', function(e) {
-        var cellEvent = e.detail;
+        var cellEvent = e.detail.primitiveEvent;
         cellEvent.value = !cellEvent.value;
     });
 

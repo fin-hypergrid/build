@@ -58,7 +58,7 @@ function deprecated(key, registry) {
             requireString = 'fin-hypergrid/src/' + key;
             warning = 'Reference to ' + key + ' internal modules using' +
                 ' `Hypergrid.' + key + '.modulename` has been deprecated as of v3.0.0 in favor of' +
-                ' `Hypergrid.require(\'' + requireString + '/modulename\')` and will be removed in a future release.' +
+                ' `Hypergrid.require(\'' + requireString + '/modulename\')`. The deprecated usage will be removed in a future release.' +
                 ' (Note however that ' + requireString + '/dataModels has been removed entirely and is no longer a module.)' +
                 ' See https://github.com/fin-hypergrid/core/wiki/Client-Modules#predefined-modules.';
             break;
@@ -67,7 +67,7 @@ function deprecated(key, registry) {
             requireString = key;
             warning = 'Reference to ' + key + ' external module using' +
                 ' `Hypergrid.' + key + '.` has been deprecated as of v3.0.0 in favor of' +
-                ' `Hypergrid.require(\'' + requireString + '\')` and will be removed in a future release.' +
+                ' `Hypergrid.require(\'' + requireString + '\')`. The deprecated usage will be removed in a future release.' +
                 ' See https://github.com/fin-hypergrid/core/wiki/Client-Modules#external-modules.';
     }
 

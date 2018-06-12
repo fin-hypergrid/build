@@ -50,8 +50,6 @@ module.exports = function() {
 
         checkboxOnlyRowSelections: true,
 
-        autoSelectRows: true,
-
         calculators: {
             Add10: add10.toString()
         },
@@ -101,7 +99,7 @@ module.exports = function() {
             birthTime: {
                 halign: 'right',
                 editor: 'time',
-                format: 'hhmm'
+                format: 'clock12'
             },
 
             birthState: {

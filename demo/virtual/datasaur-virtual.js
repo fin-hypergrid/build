@@ -1,14 +1,13 @@
 'use strict';
 
-var callbackOrdinal = 0;
-
 (function(Hypergrid) {
     var COLUMNS = 1000, // Math.pow(26, 1) + Math.pow(26, 2), // A..ZZ
         ROWS = 5000;
 
-    Hypergrid.modules.DatasaurBillions = Hypergrid.require('datasaur-local').extend('DatasaurBillions',  {
+    Hypergrid.modules['datasaur-virtual'] = Hypergrid.require('datasaur-local').extend('DatasaurVirtual',  {
 
         initialize: function(datasaur, options) {
+            this.fetchOrdinal = 0;
             this.cachedRowCount = 0;
             this.clearCache = true;
         },
@@ -98,27 +97,46 @@ var callbackOrdinal = 0;
         }
     });
 
-    function fetchData(rectangles, callback) {
+    function log(msg) {
+        if (this.trace) {
+            console.log(msg);
+        }
+    }
+
+    function fetchData(rectangles, callback, fetchOrdinal) {
         var latency = this.latency,
             fillAndCall = function(ordinal) {
                 if (!latency || Math.random() > this.failureRate) {
                     // case 1: no latency (always succeeds)
                     // case 2.1: lazy success
-                    fillRects.call(this, rectangles);
-                    this.lastSuccessfullyFetchedRects = rectangles;
-                    if (this.trace) { console.log(ordinal + ' callback'); } // observe non-deterministic order of callbacks
-                    if (callback) { callback(false); } // falsy means success (Hypergrid currently not using this value)
+                    if (ordinal < this.fetchOrdinal) {
+                        log.call(this, '-' + ordinal + ' fetch resolved late: skipping callback(false)'); // observe non-deterministic order of callbacks
+                    } else {
+                        fillRects.call(this, rectangles);
+                        this.lastSuccessfullyFetchedRects = rectangles;
+                        log.call(this, '+' + ordinal + ' fetch resolved timely: calling callback(false)'); // observe non-deterministic order of callbacks
+                        if (callback) { callback(false); } // falsy means success (Hypergrid currently not using this value)
+                    }
                 } else if (this.autoRetry) {
                     // case 2.2: lazy retry
-                    if (this.trace) { console.log(ordinal + ' retry'); }
-                    setTimeout(fetchData.bind(this, rectangles, callback),
+                    log.call(this, '~' + ordinal + ' retry');
+                    setTimeout(fetchData.bind(this, rectangles, callback, ordinal),
                         Math.random() < .2 ? 5 * latency : latency); // simulate a data server timeout (5 x latency) as cause of failure 20% of the time;
                 } else {
                     // case 2.3: lazy failure
-                    if (this.trace) { console.log(ordinal + ' failure'); }
-                    if (callback) { callback(true); } // truthy means error (Hypergrid currently not using this value)
+                    if (ordinal < this.fetchOrdinal) {
+                        log.call(this, '-' + ordinal + ' fetch failed late: skipping callback(true)');
+                    } else {
+                        log.call(this, '+' + ordinal + ' fetch failed timely: calling callback(true)');
+                        if (callback) { callback(true); } // truthy means error (Hypergrid currently not using this value)
+                    }
                 }
             };
+
+        if (!fetchOrdinal) {
+            fetchOrdinal = ++this.fetchOrdinal;
+            log.call(this, ' ' + fetchOrdinal + ' fetch request');
+        }
 
         if (latency) {
             // apply latency fudge factor
@@ -128,10 +146,10 @@ var callbackOrdinal = 0;
             latency += direction * randomFactor * latency * this.latencyDeviation;
 
             // case 2: lazy with latency ± a randomly factored latency deviation
-            setTimeout(fillAndCall.bind(this, ++callbackOrdinal), latency);
+            setTimeout(fillAndCall.bind(this, fetchOrdinal), latency);
         } else {
             // case 1: no latency
-            fillAndCall.call(this, ++callbackOrdinal);
+            fillAndCall.call(this, fetchOrdinal);
         }
     }
 

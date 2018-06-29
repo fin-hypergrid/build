@@ -48,10 +48,6 @@
         <input type="checkbox" id="fetchData" checked> fetchData;
     </label>
 
-    <label title="Check for cached data before rendering" more="because next completion routine to be called (ie, next callback) may or may not have valid data available at that time because (a) fetches are lazy and may overlap when latency non-zero (such as when grid scrolled again before previous fetch completes) and (b) fetches may complete out of order when latency non-zero and fudge factor active (order is non-deterministic).">
-        <input type="checkbox" id="gotData" checked> gotData;
-    </label>
-
     Latency: <input type="text" id="latency" value="0" style="width: 30px"> msec ±
     <label title="Random adjustment to latency for non-deterministic callback order, a value from 0 to ± this number of standard deviations from the latency value. Caveat: Latency must > render time (~16 msec, but give it a comfortable margin like > ~25).">
         <input type="checkbox" id="fudge-toggle"> fudge factor:
@@ -115,21 +111,12 @@
         }
     });
 
-    document.getElementById('gotData').addEventListener('click', function(e) {
-        if (this.checked) {
-            delete grid.behavior.dataModel.gotData; // reveal prototype method
-        } else {
-            grid.behavior.dataModel.gotData = undefined; // hide prototype method
-        }
-    });
-
-
     function fudgeClick() {
         var disabled = !this.checked;
         fudgeFactorEl.disabled = disabled;
-        document.querySelectorAll('.disableable').forEach(function(el) {
+        Array.prototype.forEach.call(document.querySelectorAll('.disableable'), forEach(function(el) {
             el.classList[disabled ? 'add' : 'remove']('disabled');
-        });
+        }));
         if (disabled) {
             grid.behavior.dataModel.latencyDeviation = 0;
         } else {

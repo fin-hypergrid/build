@@ -16,56 +16,10 @@
             if (this.clearCache) {
                 this.data = [];
                 this.cachedRowCount = 0;
-                this.lastSuccessfullyFetchedRects = false;
             }
 
             fetchData.call(this, rectangles, callback);
         },
-
-        // return true for all data fetched, false if any data missing
-        gotData: function(rects) {
-            if (
-                this.lastSuccessfullyFetchedRects &&
-                this.lastSuccessfullyFetchedRects.length === rects.length &&
-                this.lastSuccessfullyFetchedRects.every(function(oldRect, i) {
-                    return (
-                        oldRect.origin.equals(rects[i].origin) &&
-                        oldRect.corner.equals(rects[i].corner)
-                    );
-                })
-            ) {
-                return true; // shortcut when requested rects same as last successfully fetched rects
-            }
-
-            var data = this.data,
-                schema = this.schema;
-
-            // for better performance, we first
-            // (1) check all rects for any missing rows before
-            // (2) checking rows for any missing cells
-            return !(
-                rects.find(function(rect) { // (1)
-                    for (var y = rect.origin.y, Y = rect.corner.y; y < Y; ++y) {
-                        var dataRow = data[y];
-                        if (!dataRow) {
-                            return true;
-                        }
-                    }
-                })
-                ||
-                rects.find(function(rect) { // (2)
-                    for (var y = rect.origin.y, Y = rect.corner.y; y < Y; ++y) {
-                        var dataRow = data[y];
-                        for (var x = rect.origin.x, X = rect.corner.x; x < X; ++x) {
-                            if (!(schema[x].name in dataRow)) {
-                                return true;
-                            }
-                        }
-                    }
-                })
-            );
-        },
-
 
         setSchema: function(newSchema){
             if (!newSchema.length) {
@@ -78,7 +32,6 @@
 
             this.dispatchEvent('fin-hypergrid-schema-loaded');
         },
-
 
         /**
          * @see {@link https://fin-hypergrid.github.io/3.0.0/doc/dataModelAPI#getRowCount}
@@ -113,7 +66,6 @@
                         log.call(this, '-' + ordinal + ' fetch resolved late: skipping callback(false)'); // observe non-deterministic order of callbacks
                     } else {
                         fillRects.call(this, rectangles);
-                        this.lastSuccessfullyFetchedRects = rectangles;
                         log.call(this, '+' + ordinal + ' fetch resolved timely: calling callback(false)'); // observe non-deterministic order of callbacks
                         if (callback) { callback(false); } // falsy means success (Hypergrid currently not using this value)
                     }

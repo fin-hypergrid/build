@@ -114,9 +114,9 @@
     function fudgeClick() {
         var disabled = !this.checked;
         fudgeFactorEl.disabled = disabled;
-        Array.prototype.forEach.call(document.querySelectorAll('.disableable'), forEach(function(el) {
+        Array.prototype.forEach.call(document.querySelectorAll('.disableable'), function(el) {
             el.classList[disabled ? 'add' : 'remove']('disabled');
-        }));
+        });
         if (disabled) {
             grid.behavior.dataModel.latencyDeviation = 0;
         } else {

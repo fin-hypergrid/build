@@ -114,6 +114,7 @@ module.exports = function() {
             employed: {
                 halign: 'right',
                 renderer: 'button',
+                cellSelection: false,
                 backgroundColor: 'white'
             },
 

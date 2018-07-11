@@ -28,12 +28,51 @@ Hypergrid.require = require('./module-loader');
 // Install `src` the internal module namespace which is for the build file only
 Hypergrid.src = {};
 
-// Note: At this point,
+var warned = {};
 
 // Install internal modules may not be overridden so non-configurable, non-writable
 Object.defineProperties(Hypergrid.src, {
-    lib: { value: require('fin-hypergrid/src/lib') },
-    behaviors: { value: require('fin-hypergrid/src/behaviors') },
+    lib: { value: {
+        assignOrDelete: require('fin-hypergrid/src/lib/assignOrDelete'),
+        cellEventFactory: require('fin-hypergrid/src/lib/cellEventFactory'),
+        dynamicProperties: require('fin-hypergrid/src/lib/dynamicProperties'),
+        dispatchGridEvent: require('fin-hypergrid/src/lib/dispatchGridEvent'),
+        fields: require('fin-hypergrid/src/lib/fields'),
+        graphics: require('fin-hypergrid/src/lib/graphics'),
+        Canvas: require('fin-hypergrid/src/lib/Canvas'),
+        InclusiveRectangle: require('fin-hypergrid/src/lib/InclusiveRectangle'),
+        Registry: require('fin-hypergrid/src/lib/Registry'),
+
+        get DataSourceOrigin() {
+            if (!warned.DataSourceOrigin) {
+                console.warn('The `DataSourceOrigin` module has been retired as of v3.0.0. The new default data model, `datasaur-local`, will be returned instead. Note, however, that it may be removed from the build in a future release. Developers are advised and encouraged to provide their own data model going forward. For example: `new Hypergrid({ DataSource: require(\'datasaur-local\') })`; or provide a live data model instance in the `dataSource` (small "d") option.');
+                warned.DataSourceOrigin = true;
+            }
+            return require('datasaur-local');
+        },
+
+        get dynamicPropertyDescriptors() {
+            if (!warned.dynamicPropertyDescriptors) {
+                console.warn('The `dynamicPropertyDescriptors` module has been renamed as of v3.0.0 to `dynamicProperties`. (This legacy name will be removed in a future version.)');
+                warned.dynamicPropertyDescriptors = true;
+            }
+            return require('fin-hypergrid/src/lib/dynamicProperties');
+        }
+    }},
+    behaviors: { value: {
+        Behavior: require('fin-hypergrid/src/behaviors/Behavior'),
+        Local: require('fin-hypergrid/src/behaviors/Local'),
+        Column: require('fin-hypergrid/src/behaviors/Column'),
+
+        get JSON() {
+            if (!warned.behaviorsJSON) {
+                console.warn('fin-hypergrid/src/behaviors/src/behaviors/JSON has been renamed to Local as of v3.0.0. (Will be removed in a future release.)');
+            }
+            warned.behaviorsJSON = true;
+            return require('fin-hypergrid/src/behaviors/Local');
+        }
+    }},
+    dataModels: { value: require('fin-hypergrid/src/dataModels') },
     features: { value: require('fin-hypergrid/src/features') },
     Base: { value: require('fin-hypergrid/src/Base') },
     defaults: { value: require('fin-hypergrid/src/defaults') }
@@ -43,32 +82,30 @@ Object.defineProperties(Hypergrid.src, {
 Object.defineProperties(Hypergrid, {
     lib: { get: deprecated.bind(null, 'lib') },
     behaviors: { get: deprecated.bind(null, 'behaviors') },
-    dataModels: { get: deprecated.bind(null, 'dataModels') },
+    dataModels: { get: function() { return deprecated('dataModels').items; } },
     features: { get: deprecated.bind(null, 'features') },
     rectangular: { get: deprecated.bind(null, 'rectangular', 'modules') }
 });
 
-function deprecated(key, registry) {
-    registry = registry || 'src';
+function deprecated(key, namespaceName) {
+    namespaceName = namespaceName || 'src';
 
-    var requireString, warning;
+    var warning;
 
-    switch (registry) {
+    switch (namespaceName) {
         case 'src':
-            requireString = 'fin-hypergrid/src/' + key;
-            warning = 'Reference to ' + key + ' internal modules using' +
-                ' `Hypergrid.' + key + '.modulename` has been deprecated as of v3.0.0 in favor of' +
-                ' `Hypergrid.require(\'' + requireString + '/modulename\')`. The deprecated usage will be removed in a future release.' +
-                ' (Note however that ' + requireString + '/dataModels has been removed entirely and is no longer a module.)' +
-                ' See https://github.com/fin-hypergrid/core/wiki/Client-Modules#predefined-modules.';
+            warning = 'Reference to the `Hypergrid.' + key + '` namespace has been deprecated as of v3.0.0 and will be removed in a future release.' +
+                ' Update dereferencing of this namespace such as `Hypergrid.' + key + '.modulename` to' +
+                ' `Hypergrid.require(\'fin-hypergrid/src/' + key +'/modulename\')`.' +
+                ' See https://fin-hypergrid.github.io#internal-modules.';
             break;
 
         case 'modules':
-            requireString = key;
-            warning = 'Reference to ' + key + ' external module using' +
-                ' `Hypergrid.' + key + '.` has been deprecated as of v3.0.0 in favor of' +
-                ' `Hypergrid.require(\'' + requireString + '\')`. The deprecated usage will be removed in a future release.' +
-                ' See https://github.com/fin-hypergrid/core/wiki/Client-Modules#external-modules.';
+            warning = 'Reference to the `' + key + '` external module through' +
+                ' `Hypergrid.' + key + '` has been deprecated as of v3.0.0 in favor of' +
+                ' `Hypergrid.require(\'' + key + '\')`.' +
+                ' The deprecated usage will be removed in a future release.' +
+                ' See https://fin-hypergrid.github.io#external-dependencies.';
     }
 
     if (!deprecated.warned[key]) {
@@ -76,6 +113,7 @@ function deprecated(key, registry) {
         deprecated.warned[key] = true;
     }
 
-    return Hypergrid.require(requireString);
+    var namespace = Hypergrid[namespaceName];
+    return (namespace.items || namespace)[key];
 }
 deprecated.warned = {};

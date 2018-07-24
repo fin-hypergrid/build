@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+    <title>Instructions &mdash; Hypergrid Cell Formatter &amp; Editor Workbench</title>
     <style>
         body {
             font: 10pt sans-serif;
@@ -87,9 +89,9 @@
     interface and concludes with a <a href="#example">tutorial/example</a>.
 </div>
 
-<p>This “workbench” is for learning about Hypergrid cell formatting and editing using <em>localizers</em> and <em>cell editors</em>.
+<p>This <em>workbench</em> is for learning about Hypergrid cell formatting and editing using <em>localizers</em> and <em>cell editors</em>.
 You can also use it for actual development and testing of these objects, but be aware this app does not persist your work anywhere.
-Be carefore to cut &amp; paste anything you want to keep!</p>
+Be careful therefore to cut &amp; paste anything you want to keep!</p>
 
 <div style="page-break-inside: avoid">
     <h3>Data pane</h3>
@@ -101,13 +103,24 @@ Be carefore to cut &amp; paste anything you want to keep!</p>
 <div style="page-break-inside: avoid">
     <h3>State pane</h3>
     This pane lets you add a set of properties declaratively to the grid.
-    Properties can also be set programmaticaly from the console with the various set property methods.
+    Properties can also be set programmatically from the console with the various set property methods.
 </div>
 
 <div style="page-break-inside: avoid">
     <h4>Example</h4>
+    Consider the default State pane:
+    <pre>{
+    editable: true,
+    editor: "textfield",
+    columns: {
+        prevclose: {
+            halign: "right",
+            format: "trend"
+        }
+    }
+}</pre>
     <ol>
-        <li>Edit the state pane to make the <code>prevclose</code> column to use the <code>ft-in</code> (“foot-inch”) localizer.</li>
+        <li>Edit the state pane to make the <code>prevclose</code> column use the <code>ft-in</code> (“foot-inch”) localizer rather than the <code>trend</code> localizer.</li>
         <li>Click the <code class="button">grid.addState(…)</code> button.</li>
         <li>Notice how these values are now formatted as feet and inches.</li>
         <li>Double click one of these formatted values in the grid. Cell editing is enabled because:
@@ -117,7 +130,7 @@ Be carefore to cut &amp; paste anything you want to keep!</p>
                 <li>The cell’s <code>ft-in</code> localizer has a <a href="https://fin-hypergrid.github.io/core/doc/localizerInterface.html#parse" class="code">parse</a> method. (You can see the localizer by selecting it from the dropdown in the Localizer pane.)</li>
             </ul>
         </li>
-        <li>Notice how editing in the grid is done in the format specified by the localizer (unlike the in the Data pane where these numbers are integers). The cell editor uses the localizer’s <a href="https://fin-hypergrid.github.io/core/doc/localizerInterface.html#parse" class="code">parse</a> function to turn the edited value back into an integer.</li>
+        <li>Notice how editing in the grid is done in the format specified by the localizer — unlike the in the Data pane where these numbers are integers. The cell editor uses the localizer’s <a href="https://fin-hypergrid.github.io/core/doc/localizerInterface.html#parse" class="code">parse</a> function to turn the edited value back into an integer.</li>
     </ol>
 </div>
 
@@ -126,14 +139,14 @@ Be carefore to cut &amp; paste anything you want to keep!</p>
 Value formatting in Hypergrid is controlled by <em>localizers,</em> objects with the following shape:
 
 <pre>{
-  format: function(str), // required; returns value
-  parse: function(value), // required; returns string
-  invalid: function(value), // optional; helper function for `parse`
+  format: function(str), // required method that returns value
+  parse: function(value), // required method that returns string
+  invalid: function(value), // optional helper function for `parse`
   expectation: "optional error message describing expected syntax"
 }</pre>
 </div>
 
-Formatting grid cell values is purely a text string manipulation. Any other graphical effects are the purview of cell renderers (not covered here). Cell editors can include fancy controls for manipulating the string, but the result needs to be a formatted string (which will be parsed before storing the result in the data model).
+Formatting grid cell values is purely a text string manipulation. Any other graphical effects are the purview of cell renderers (not covered here). Cell editors can include fancy controls for manipulating the string, but the result needs to be a formatted string, parsable into a serializable value for storing into the data model.
 
 <div style="page-break-inside: avoid">
     <h4><a href="https://fin-hypergrid.github.io/core/doc/localizerInterface.html#format" class="code">format</a></h4>
@@ -147,7 +160,7 @@ Formatting grid cell values is purely a text string manipulation. Any other grap
     Parses values in the displayed format, converting them back into raw data values. Used by cell editors to store results back to data model, or by search algorithms to compare a formatted value to other cells' raw values (without having to format every on of the other cells), <i>etc.</i>
 </div>
 
-<p></p>Although <a href="https://fin-hypergrid.github.io/core/doc/localizerInterface.html#parse" class="code">parse</a> is only called by Hypergrid when a formatted cell is edited, an implementation is currently required (by <code>add</code>). The reason for this is "completeness" — to be ready and available when your application inevitably needs to parse a value later on. The assumption is it’s easier to write a parser when you write the formatter than to have to go back later and rethink it. <em>That said, you can provide a no-op implementation to fake out <code>add</code> but you do so at your peril. (So long as the cells using this localizer are not editable you should be all right.)</em></li>
+<p></p>Although <a href="https://fin-hypergrid.github.io/core/doc/localizerInterface.html#parse" class="code">parse</a> is only called by Hypergrid when a formatted cell is edited, an implementation is currently required (by <code>add</code>). The reason for this is "completeness" — to be ready and available when your application inevitably needs to parse a value later on. The assumption is it’s easier to write a parser when you write the formatter than to have to go back later and rethink it. (That said, you can provide a no-op implementation to fake out <code>add</code> but you do so at your peril. So long as the cells using this localizer are not editable you should be all right.)</li>
 
 <div style="page-break-inside: avoid">
     <h4><a href="https://fin-hypergrid.github.io/core/doc/localizerInterface.html#invalid" class="code">invalid</a></h4>
@@ -332,7 +345,7 @@ For example, here’s a localizer to show a “degrees” unit:
     Cell editors depend on localizers and always have a default localizer that is used when the cell does not define a custom localizer (in its <code>format</code> property). Custom cell editors generally work hand-in-hand with a custom localizer. Let’s add a simple editor to the <code>prevclose</code> column. The column already specifies a custom localizer, <code>trend</code>. We're going to bind a custom cell editor to this column, also called <code>Trend</code>.
 </div>
 
-<blockquote style="font-size:smaller"><i>Note:</i> The <code>get</code> methods, such as <code>grid.localization.get(localizerName)</code> and <code>grid.cellEditors.get(cellEditorName)</code> treat their parameter as case-insensitive. Localizer and cell editor names must be unique but exist in different name spaces which is why these two names don't clash (not case differences.) The only reason cell editors start with a capital letter is a nod to the fact that they’re object constructors (or "classes" which by long-standing convention are always capitalized).</blockquote>
+<blockquote style="font-size:smaller"><i>Note:</i> The <code>get</code> methods, such as <code>grid.localization.get(localizerName)</code> and <code>grid.cellEditors.get(cellEditorName)</code> treat their parameter as case-insensitive. Localizer and cell editor names must be unique but exist in different name spaces which is why these two names don't clash (<em>not</em> because of the case differences.) The cell editor here could have been called "trend" but cell editors by convention start with a capital letter because they’re object constructors (or "classes" — which by long-standing convention are always capitalized).</blockquote>
 
 <ol>
     <li>In the State pane, add <code>editor: "Trend"</code> to the <code>prevclose</code> column.</li>
@@ -346,6 +359,7 @@ This cell editor makes toggling the arrow a simple matter of clicking on it. Thi
 
 <div style="page-break-inside: avoid">
     <h5>Edit the cell editor</h5>
+    Let's add a keypress handler to provide a way to type the up-arrow and down-arrow.
     Take a look at the <code>Trend</code> cell editor:
     <ol>
         <li>In the Cell Editor pane, select "Trend" from the drop-down.</li>
@@ -364,12 +378,20 @@ This <code>keypress</code> handler does two things:
 
 <div style="page-break-inside: avoid">
     <h5>Regarding <code>this.super</code></h5>
-    Calling the superclasses implementation from <code>setEditorValue</code>, <code>setEditorValue</code>, and  <code>setEditorValue</code>, while not a requirement, is a common pattern and is recommended.
+    Calling the superclass’s implementation from <a href="https://fin-hypergrid.github.io/core/doc/CellEditor.html#setEditorValue"><code>setEditorValue</code></a>, <a href="https://fin-hypergrid.github.io/core/doc/CellEditor.html#getEditorValue"><code>getEditorValue</code></a>, and  <a href="https://fin-hypergrid.github.io/core/doc/CellEditor.html#validateEditorValue"><code>validateEditorValue</code></a>, while not a requirement, is a common pattern and is recommended.
 </div>
 
 <div style="page-break-inside: avoid">
     <h3>Debugging cell editors</h3>
-    Because the workbench's cell editors are dynamically added and don't exist as code files, debugging is challenging. To see your cell editor's code page, make sure you have an <code>initialize</code> method (even if it’s empty). From the browser console, load up <code>src/cellEditors/CellEditor.js</code>. Place a breakpoint on the last line of the <code>initialize</code> method. From there 1 &times; "step-over" &plus; 3 &times; "step-into" and you should find yourself in the subclass’s <code>initialize</code> method. (To get to a sub-subclass: .1 &times; "step-out" &plus; 3 &times; "step-into") Now that the debugger is displaying your cell editor, you can set breakpoints in your other methods.
+    Because the workbench's cell editors are dynamically added and don't exist as code files, debugging is challenging. Here’s one way to see your cell editor's code page:
+    <ol>
+        <li>Make sure you have an <code>initialize</code> method (even if it’s empty).</li>
+        <li>From the browser console, load up <code>src/cellEditors/CellEditor.js</code>.</li>
+        <li>Place a breakpoint on the last line of the <code>initialize</code> method. If empty, you can place the breakpoint on the closing brace (<code>}</code>).</li>
+        <li>Open the cell for editing by double-clicking it.</li>
+        <li>From the breakpoint do 1 &times; "step-over" &plus; 3 &times; "step-into" and you should find yourself in the subclass’s <code>initialize</code> method. (To get to a sub-subclass: 1 &times; "step-out" &plus; 3 &times; "step-into")</li>
+    </ol>
+    Now that the debugger is displaying your cell editor, you can set breakpoints in your other methods.
 </div>
 
 <script>

@@ -42,6 +42,7 @@ function Demo() {
     Object.defineProperties(window, {
         grid: { get: function() { return grid; } },
         g: { get: function() { return grid; } },
+        p: { get: function() { return grid.properties; }},
         b: { get: function() { return grid.behavior; } },
         m: { get: function() { return grid.behavior.dataModel; } }
     });

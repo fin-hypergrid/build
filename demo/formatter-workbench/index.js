@@ -1,5 +1,7 @@
 'use strict';
 
+var NEW = '(New)';
+
 var grid = new fin.Hypergrid({ boundingRect: { height: '141px' } }); // 5 * 28 + 2 - 1
 
 grid.properties.defaultRowHeight = 26;
@@ -22,10 +24,7 @@ putJSON('state', {
             halign: 'right',
             format: 'trend'
         }
-    }
-});
-
-grid.addProperties({
+    },
     showRowNumbers: false
 });
 
@@ -35,8 +34,7 @@ grid.addEventListener('fin-after-cell-edit', function(e) {
     putJSON('data', grid.behavior.getData());
 });
 
-initLocalsButton('editor', Object.keys(grid.cellEditors.items).concat(['module', 'CellEditor']));
-initLocalsButton('localizer', 'module');
+initLocalsButtons();
 
 var saveFuncs = {
     editor: saveCellEditor,
@@ -48,10 +46,15 @@ Object.keys(scripts).forEach(function(key) {
 });
 
 function initLocalsButton(type, locals) {
-    var el = document.getElementById(type + '-dropdown').nextElementSibling.nextElementSibling;
-    var locals = [].concat(locals).sort();
+    var el = document.getElementById(type + '-dropdown').parentElement.querySelector('.locals');
+    locals = locals.sort();
     el.title = locals.join('\n');
     el.onclick = function() { alert('Local variables: ' + locals.join(', ')); };
+}
+
+function initLocalsButtons() {
+    initLocalsButton('editor', ['module', 'exports', 'CellEditor'].concat(Object.keys(grid.cellEditors.items)));
+    initLocalsButton('localizer', ['module', 'exports']);
 }
 
 function initScripts(type) {
@@ -63,7 +66,7 @@ function initScripts(type) {
 
     scriptList.map(extractName).sort().forEach(function(key) {
         dropdownEl.add(new Option(key));
-        if (key !== '(New)') {
+        if (key !== NEW) {
             save(findScript(scriptList, key));
         }
     });
@@ -106,16 +109,16 @@ function putJSON(key, json) {
         .replace(/(  +)"([a-zA-Z$_]+)"(: )/g, '$1$2$3'); // un-quote keys
 }
 
-function callApi(methodName, id, zow) {
-    var value;
+function callApi(methodName, id, confirm) {
+    var jsonEl = document.getElementById(id), value;
 
     // L-value must be inside eval because R-value beginning with '{' is eval'd as BEGIN block
     // used eval because JSON.parse rejects unquoted keys
-    eval('value =' + document.getElementById(id).value);
+    eval('value =' + jsonEl.value);
     grid[methodName].call(grid, value);
 
-    if (zow) {
-        zowie(document.getElementById(id));
+    if (confirm) {
+        confirmation(jsonEl.parentElement);
     }
 }
 
@@ -123,11 +126,12 @@ function saveCellEditor(script, select) {
     var cellEditors = grid.cellEditors;
     var editorNames = Object.keys(cellEditors.items);
     var editors = editorNames.map(function(name) { return cellEditors.items[name]; });
-    var module = {};
-    var formalArgs = [null, 'module', 'CellEditor']
+    var exports = {}, module = { exports: exports };
+    var formalArgs = [null, 'module', 'exports', 'CellEditor'] // null is for bind's thisArg
         .concat(editorNames) // additional params
         .concat(script); // function body
-    var actualArgs = [module, cellEditors.BaseClass].concat(editors);
+    var actualArgs = [module, exports, cellEditors.BaseClass]
+        .concat(editors);
 
     try {
         var closure = new (Function.prototype.bind.apply(Function, formalArgs)); // calls Function constructor using .apply
@@ -135,9 +139,9 @@ function saveCellEditor(script, select) {
         var Editor = module.exports;
         var name = Editor.prototype.$$CLASS_NAME;
         if (!(Editor.prototype instanceof cellEditors.BaseClass)) {
-            throw 'Cannot save cell editor "' + name + '" because it is not a subclass of CellEditor (accessible as grid.cellEditors.BaseClass).';
+            throw 'Cannot save cell editor "' + name + '" because it is not a subclass of CellEditor (aka grid.cellEditors.BaseClass).';
         }
-        if (!name || name === 'new') {
+        if (!name || name === NEW) {
             throw 'Cannot save cell editor. A `name` property with a value other than "new" is required.';
         }
     } catch (err) {
@@ -154,8 +158,10 @@ function saveCellEditor(script, select) {
     addOptionInAlphaOrder(select, name);
 
     if (select) {
-        zowie(document.getElementById(select.id.replace('-dropdown', '-script')));
+        confirmation(select.parentElement);
     }
+
+    initLocalsButtons();
 }
 
 function saveLocalizer(script, select) {
@@ -166,7 +172,7 @@ function saveLocalizer(script, select) {
         closure(module);
         var localizer = module.exports;
         var name = localizer.name;
-        if (!name || name === '(New)') {
+        if (!name || name === NEW) {
             throw 'Cannot save localizer. A `name` property with a value other than "(New)" is required.';
         }
         grid.localization.add(localizer);
@@ -181,7 +187,7 @@ function saveLocalizer(script, select) {
     addOptionInAlphaOrder(select, name);
 
     if (select) {
-        zowie(document.getElementById(select.id.replace('-dropdown', '-script')));
+        confirmation(select.parentElement);
     }
 }
 
@@ -203,11 +209,16 @@ function addOptionInAlphaOrder(el, text, value) {
     el.value = name;
     if (el.selectedIndex === -1) {
         el.add(new Option(text, value), firstOptionGreaterThan);
-        el.selectedIndex = el.options.length - 1;
+        el.value = value || text;
     }
 }
 
-function zowie(el) {
-    el.className = 'zowie';
-    setTimeout(function() { el.className = ''; }, 400);
+function confirmation(content) {
+    var el = content.querySelector('span.feedback');
+    var style = el.style;
+    var text = el.innerText;
+    style.display = 'inline';
+    setTimeout(function() {
+        style.display = 'none';
+    }, 750 + 50 * text.length);
 }

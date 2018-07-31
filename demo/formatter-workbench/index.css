@@ -7,23 +7,29 @@ table {
 }
 textarea {
     font: 8pt monospace;
-    background-color: ivory;
-    border-radius: 5px;
-    height: 100%;
-    width: 100%;
-    transition: background-color 1s;
+    background-color: transparent;
+    height: calc(100% - 37px);
+    border: 0;
+    border-top: 1px dashed #aaa;
+    padding: 0 6px;
+    width: calc(100% - 12px);
+    display: block;
+    resize: none;
 }
-textarea.zowie {
-    background-color: yellow;
-    transition: none;
+.curvy-tabs-content {
+    padding: 0
 }
 label {
     white-space: nowrap;
     font: normal 9pt sans-serif;
 }
-select, input {
-    /*margin-right: .5em;*/
+select, input, textarea {
     outline: 0;
+}
+span.feedback {
+    float: right;
+    margin-top: 12px;
+    display: none;
 }
 input[type=button] {
     background-color: grey;
@@ -32,14 +38,15 @@ input[type=button] {
 }
 input[type=button].locals {
     cursor: help;
-    float: left;
-    margin-left: 3em;
+    margin: 9px;
     border-radius: 4px;
 }
 input[type=button].api {
-    font: 14px monospace;
-    border-radius: 7px;
-    padding: 3px 9px;
+    font: 12px monospace;
+    border-radius: 4px;
+    padding: 4px 7px;
+    margin: 6px;
+    float: right;
 }
 input[type=button]:hover {
     background-color: #555;

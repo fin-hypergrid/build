@@ -14,48 +14,47 @@
     </div>
 </h1>
 
-<table style="width:100%"><tr>
-    <td>
+<div class="curvy-tabs-container" style="height:400px; margin-bottom:1em">
+    <div class="curvy-tabs-content" style="background-color:#dff" name="Data">
         <input type="button" class="api" value="grid.setData(…)" onclick="callApi('setData', 'data', true)">
-    </td>
-    <td>
-        <input type="button" class="api" value="grid.addState(…)" onclick="callApi('addState', 'state', true)">
-    </td>
-</tr><tr>
-    <td style="width:50%; height:300px">
+        <span class="feedback">Data has been set</span>
         <textarea id="data"></textarea>
-    </td>
-    <td style="width:50%; height:300px">
-        <textarea id="state"></textarea>
-    </td>
-</tr><tr>
-    <td style="text-align:right; white-space: nowrap">
-        Load localizer:
-        <select id="localizer-dropdown"></select>
-        <input type="button" class="api" value="grid.localization.add(…)" style="float:left">
-        <input type="button" value="Locals" class="locals">
-    </td>
-    <td style="text-align:right; white-space: nowrap">
-        Load cell editor:
-        <select id="editor-dropdown"></select>
-        <input type="button" class="api" value="grid.cellEditors.add(…)" style="float:left">
-        <input type="button" value="Locals" class="locals">
-    </td>
-</tr><tr>
-    <td style="height:300px">
-        <textarea id="localizer-script"></textarea>
-    </td>
-    <td style="height:300px">
-        <textarea id="editor-script"></textarea>
-    </td>
-</tr></table>
+    </div>
 
+    <div class="curvy-tabs-content" style="background-color:#fdf" name="State">
+        <input type="button" class="api" value="grid.addState(…)" onclick="callApi('addState', 'state', true)">
+        <span class="feedback">State has been added</span>
+        <textarea id="state"></textarea>
+    </div>
+
+    <div class="curvy-tabs-content" style="background-color:#ffd" name="Localizers">
+        <input type="button" value="Locals" class="locals">
+        Load: <select id="localizer-dropdown"></select>
+        <input type="button" class="api" value="grid.localization.add(…)">
+        <span class="feedback">Saved</span>
+        <textarea id="localizer-script"></textarea>
+    </div>
+
+    <div class="curvy-tabs-content" style="background-color:#ddf" name="Cell Editors">
+        <input type="button" value="Locals" class="locals">
+        Load: <select id="editor-dropdown"></select>
+        <input type="button" class="api" value="grid.cellEditors.add(…)">
+        <span class="feedback">Saved</span>
+        <textarea id="editor-script"></textarea>
+    </div>
+</div>
 
 <script src="../build/fin-hypergrid.js"></script>
 
 <script>var exports = {}, module = {exports};</script>
 <script src="scripts.js"></script>
 <script>var scripts = module.exports; delete window.exports; delete window.module;</script>
+
+<script src="https://joneit.github.io/curvy-tabs/1.0.0/build/curvy-tabs.js"></script>
+<script>
+    var tabBar = new CurvyTabs(document.querySelector('.curvy-tabs-container'));
+    tabBar.paint();
+</script>
 
 <script src="index.js"></script>
 

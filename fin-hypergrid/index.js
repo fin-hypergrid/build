@@ -72,6 +72,8 @@ Object.defineProperties(Hypergrid.src, {
             return require('fin-hypergrid/src/behaviors/Local');
         }
     }},
+    cellEditors: { value: require('fin-hypergrid/src/cellEditors') },
+    cellRenderers: { value: require('fin-hypergrid/src/cellRenderers') },
     dataModels: { value: require('fin-hypergrid/src/dataModels') },
     features: { value: require('fin-hypergrid/src/features') },
     Base: { value: require('fin-hypergrid/src/Base') },

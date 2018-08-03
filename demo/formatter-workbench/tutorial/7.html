@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="tutorial.css">
+  <script src="index.js"></script>
+</head>
+<body>
+<h2>Localizers tab</h2>
+Localizers have the following shape:
+
+<pre>{
+  format: function(str), // required method that returns value
+  parse: function(value), // required method that returns string
+  invalid: function(value), // optional helper function for `parse`
+  expectation: "optional error message describing expected syntax"
+}</pre>
+</body>
+</html>

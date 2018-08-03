@@ -2,10 +2,7 @@
 
 var NEW = '(New)';
 
-var grid = new fin.Hypergrid({ boundingRect: { height: '141px' } }); // 5 * 28 + 2 - 1
-
-grid.properties.defaultRowHeight = 26;
-grid.properties.foregroundSelectionFont = 'bold ' + (grid.properties.font = '14pt sans-serif');
+var grid = new fin.Hypergrid();
 
 putJSON('data', [
     { symbol: 'APPL', name: 'Apple Inc.', prevclose: 93.13 },

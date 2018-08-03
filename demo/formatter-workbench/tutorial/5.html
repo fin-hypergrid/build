@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="tutorial.css">
+  <script src="index.js"></script>
+</head>
+<body>
+<h2>Data editor</h2>
+This editor let’s you adjust the data shown in the grid.
+<ul>
+  <li>The initial contents is the actual data shown in the grid instance above it.</li>
+  <li>After editing the data, bind it to the grid by clicking <code class="button">grid.setData(…)</code>.</li>
+  <li>The grid in turn is bound to the data window: Any edits made to cells (via cell editors) will alter the contents of this editor.</li>
+</ul>
+<p>
+  In actual practice, when data is set using <code>setData</code>, it typically has come from a data store, typically as a character string in JSON format.
+  If that is the case, you would probably call <code>JSON.parse</code> on it, rather than <code>eval</code>; and pass the result to <code>setData</code>.
+  In this workbench, we’re using straight JavaScript, not JSON, which is why we’re using using <code>eval</code>, not <code>JSON.parse</code>.
+  When editing, therefore, you do not have to worry about strict adherence to the JSON standard (double quotes, primitive types, _etc._).
+</p>
+</body>
+</html>

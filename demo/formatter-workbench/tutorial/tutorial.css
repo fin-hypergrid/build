@@ -1,0 +1,57 @@
+body {
+    font: 10pt sans-serif;
+    margin: 8px;
+    column-gap: 2em;
+}
+pre {
+    font: 8pt monospace;
+    background-color: #eee;
+    border: 1px solid #aaa;
+    padding: 0.4em;
+    white-space: pre-wrap;
+}
+span.button {
+    background-color: #eee;
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 1px 3px;
+    font-size: 7pt;
+    font-weight: bold;
+}
+a.code, code {
+    font-family: monospace;
+    font-weight: bold;
+    color: #444;
+    background-color: #ddd;
+    padding: 0 4px;
+    border-radius: 3px;
+}
+p {
+    margin: .6em 0;
+}
+ul, ol {
+    margin-top: .4em;
+    margin-bottom: .4em;
+}
+li {
+    margin: .3em 0 .3em -1em;
+}
+h2 {
+    border-bottom: 2px solid black;
+    letter-spacing: 1px;
+}
+h3 {
+    border-bottom: 1px solid grey;
+    margin-bottom: .6em;
+}
+h4 {
+    color: #333;
+    margin-bottom: .6em;
+}
+div.note {
+    text-align: center;
+    margin: 1em 15%;
+    padding: .75em;
+    background-color: ivory;
+    border: 3px orange double;
+}

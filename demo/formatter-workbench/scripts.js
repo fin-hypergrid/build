@@ -6,11 +6,13 @@ exports.editor = [
 
 });`,
 
-`module.exports = Textfield.extend('Trend', {
+`var UP = '⬆', DN = '⬇';
+
+module.exports = Textfield.extend('Trend', {
     template: [
       '<div class="hypergrid-textfield" style="text-align:right; white-space:nowrap;">',
       '  <input type="text" lang="{{locale}}" style="background-color:transparent; width:77%; text-align:right; border:0; padding:0; outline:0; font:inherit; margin-right: -1px;' +
-      '{{style}}"><span>⬆</span>',
+      '{{style}}"><span>' + UP + '</span>',
       '</div>'
     ].join('\\n'),
 
@@ -18,18 +20,18 @@ exports.editor = [
       this.input = this.el.querySelector('input');
       this.trend = this.el.querySelector('span');
 
-      // Flip AM/PM on any click
+      // Flip arrow on any click
       this.trend.onclick = function() {
-        this.trend.textContent = this.trend.textContent === '⬆' ? '⬇' : '⬆';
+        this.trend.textContent = this.trend.textContent === UP ? DN : UP;
         this.input.focus(); // return focus to text field
       }.bind(this);
 
 /*
-      // Flip AM/PM on 'am' or 'pm' keypresses
+      // Flip arrow on + and - keypresses
       this.input.onkeypress = function(e) {
         switch (e.key) {
-          case '+': this.trend.textContent = '⬆'; e.preventDefault(); break;
-          case '-': this.trend.textContent = '⬇'; e.preventDefault(); break;
+          case '+': this.trend.textContent = UP; e.preventDefault(); break;
+          case '-': this.trend.textContent = DN; e.preventDefault(); break;
           default:
             // only allow digits, decimal point, and specials (ENTER, TAB, ESC)
             if ('0123456789.'.indexOf(e.key) < 0 && !this.specialKeyups[e.keyCode]) {
@@ -43,7 +45,7 @@ exports.editor = [
 
     setEditorValue: function(value) {
       this.super.setEditorValue.call(this, value);
-      this.trend.textContent = value < 0 ? '⬇' : '⬆';
+      this.trend.textContent = value < 0 ? DN : UP;
       this.input.value = Math.abs(value).toFixed(2);
     },
 
@@ -77,21 +79,26 @@ exports.localizer = [
   // expectation: 'optional string describing valid syntax displayed on error'
 };`,
 
-`module.exports = {
+`var UP = '⬆', DN = '⬇';
+
+var REGEX_VALID = new RegExp('^(\\\\d+(\\\\.(\\\\d+)?)?|\\\\.\\\\d+)[' + DN + UP + ']$');
+var REGEX_NEGATIVE = new RegExp('(^-|' + DN + '$)');
+
+module.exports = {
   name: 'trend',
   format: function(value) {
-    return Math.abs(value).toFixed(2) + (value < 0 ? '⬇' : '⬆');
+    return Math.abs(value).toFixed(2) + (value < 0 ? DN : UP);
   },
   parse: function(str) {
     var value = parseFloat(str);
     
     // if (isNaN(value)) { throw new SyntaxError('Expected input to start with a floating point number representation optionally prefixed with a negative sign and/or ending with optional optional down-arrow.'); }
     
-    if (/(^-|⬇$)/.test(str)) { value = -Math.abs(value); }
+    if (REGEX_NEGATIVE.test(str)) { value = -Math.abs(value); }
     
     return value; 
   },
-  invalid: function(str) { return !/^(\\d+(\\.(\\d+)?)?|\\.\\d+)[⬇⬆]$/.test(str); }
+  invalid: function(str) { return !REGEX_VALID.test(str); }
 };`,
 
 `var footInchPattern = /^\s*((((\\d+)')?\\s*((\\d+)")?)|\\d+)\\s*$/;

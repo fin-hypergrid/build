@@ -7,13 +7,14 @@
 </head>
 <body>
 <h2>Cell Editors tab</h2>
-Localizers have the following shape:
+Cell editors facilitate editing cell values.
+<ul>
+  <li>Open a cell editor by double-clicking the cell.</li>
+  <li>An editor is superimposed over the cell.</li>
+  <li>Abort the edit by pressing the <span class"button">esc</span> key.</li>
+  <li>Close the editor by pressing the <span class"button">enter</span> key.</li>
+</ul>
+It comes with a sample cell editor called <code>Trend</code> for editing values formatted and parsed with the <code>trend</code> localizer.
 
-<pre>{
-  format: function(str), // required method that returns value
-  parse: function(value), // required method that returns string
-  invalid: function(value), // optional helper function for `parse`
-  expectation: "optional error message describing expected syntax"
-}</pre>
 </body>
 </html>

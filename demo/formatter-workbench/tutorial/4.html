@@ -15,17 +15,41 @@ The four tabs in the lower left pane are for editing data and code.
   <li>The API is called with the <code>eval</code>’d editor text.</li>
 </ul>
 
-<h3><em>Data</em> tab</h3>
-The Data editor is provided to adjust the data to suit the needs of your localizers and cell editors.
+<h3>Synopsis</h3>
 
-<h3><em>State</em> tab</h3>
-This tab lets you set grid properties declaratively.
+<h4>Data tab</h4>
+The Data tab contains a JavaScript representation of the grid’s data source.
+This tab lets you edit the grid data to suit the needs of your localizer and cell editor development.
 
-<h3><em>Localizer</em> tab</h3>
-Value formatting in Hypergrid is controlled by <em>localizers.</em>
+<h4>State tab</h4>
+A Hypergrid <em>state</em> object contains grid property settings affecting look, feel, and behavior of a grid.
+This tab lets you edit a state object and <em>load</em> it into the grid.
 
-<h3><em>Cell Editor</em> tab</h3>
-This tab lets you create and edit cell editors. It comes with a sample cell editor called <code>Time</code> for editing values formatted with the <code>hh:mm</code> localizer.
+<h4>Localizer tab</h4>
+Hypergrid <em>localizers</em> control how strings are formatted for display.
+This tab lets you select an existing localizer for editing, or create and save* a new localizer.
+
+<h4>Cell Editor tab</h4>
+Hypergrid <em>cell editors</em>
+This tab lets you select an existing cell editor for editing, or create and save* a new localizer.
+
+<table class="footnote" style="">
+  <caption><div></div></caption> <!--separator line-->
+  <tr>
+    <td>*</td>
+    <td>
+      This app persists data between sessions using <a href="https://developer.mozilla.org/docs/Web/API/Storage/LocalStorage">LocalStorage</a> only.
+      To save your work per&shy;ma&shy;nent&shy;ly, cut &amp; paste to a file.
+    </td>
+  </tr>
+</table>
+
+<h3>Details</h3>
+<p>
+  Let’s take these one at a time.
+  Click <span class="button" style="font-style:normal">Next &gt;</span> above…
+</p>
+</div>
 
 </body>
 </html>

@@ -8,7 +8,48 @@
 <body>
 <h2>State editor</h2>
 <p>
-  Properties can also be set programmatically from the console with the various set property methods.
+  Hypergrid has API calls for loading and saving <em>state</em>.
 </p>
+<p>
+  Loading a state object is a way of assigning own members to <code>grid.properties</code> declaratively. <em>Grid state</em> is the own layer of <code>grid.properties</code> (<i>i.e.,</i> not including its prototype chain, which contains defaults, theming, <i>etc.</i>).
+</p>
+
+<h3>Activity 4: Edit a grid property in the State tab</h3>
+Show the grid row numbers:
+<ol>
+  <li>Switch to the State tab.</li>
+  <li>Edit the value of the value of the <code>showRowNumbers</code> property to be <code>true</code> rather than <code>false</code>.</li>
+  <li>Click the <code class="button">grid.addState(…)</code> button.</li>
+  <li>Observe how the grid is now rendered with row numbers.</li>
+</ol>
+
+<h3>Activity 5: Edit a column property in the State tab</h3>
+Column properties can also be set through grid state — although this is not always appropriate inasmuch as you don’t always know about the columns in advance; there are other ways to set column properties, <i>e.g.,</i> programmatically, or by loading and setting column properties objects).
+<ol>
+  <li>Switch to the State tab.</li>
+  <li>Observe how the <code>prevclose</code> column specifies a <code>format</code> property with value <code>'trend'</code>.</li>
+  <li>Change the format to <code>ft-in</code> (“foot-inch”).</li>
+  <li>Click the <code class="button">grid.addState(…)</code> button.</li>
+  <li>Observe how these values are now formatted as feet and inches, per the localizer’s <a href="https://fin-hypergrid.github.io/core/doc/localizerInterface.html#format" class="code">format</a> method.</li>
+</ol>
+The value of the <code>format</code> property must be a registered <em>localizer</em>.
+We will discuss localizers and cell editors in more detail later on.
+For now, be aware that grid cell editors respect localizers.
+Because the edited value needs to be stored back to the data source in its unformatted state,
+a cell is editable when its localizer implements the optional
+<a href="https://fin-hypergrid.github.io/core/doc/localizerInterface.html#parse" class="code">parse</a> method.
+<ol start="6">
+  <li>Open one of these formatted cells for editing by double-clicking it in the grid.</li>
+  <li>The cell editor opens.</li>
+</ol>
+Because the cell editor opened, we know the cell’s localizer implements <code>parse</code> (which you can see by switching to the Localizers tab and selecting <code>ft-in</code> from the drop-down).
+Note by the way that besides this requirement, to be editable, a cell must also have a truthy <code>editable</code> property, and its <code>editor</code> property must name a registered cell editor, in this case by falling back to the grid's <code>editor</code> property, which is <code>textfield</code>.
+<ol start="8">
+  <li>Edit the value.</li>
+  <li>Close the cell editor.</li>
+  <li>In the Data tab, observe the updated value.</li>
+</ol>
+Notice that the values in the Data tab are "raw" (unformatted). The cell editor uses the localizer’s <a href="https://fin-hypergrid.github.io/core/doc/localizerInterface.html#parse" class="code">parse</a> function to turn the edited value back into the raw data value, an integer.</li>
+
 </body>
 </html>

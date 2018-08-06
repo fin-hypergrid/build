@@ -9,71 +9,37 @@
 </head>
 <body>
 
-<script>
-
-    var tabBars = [];
-    window.onload = function() {
-        document.querySelectorAll('.curvy-tabs-container').forEach(function(container) {
-            var tabBar = new CurvyTabs(container);
-            tabBar.paint();
-            tabBars.push(tabBar);
-        });
-
-        var p = 1, MAX_PAGE = 8;
-
-        document.getElementById('page-max').innerText = document.getElementById('page-control').max = MAX_PAGE;
-        page(p, 0);
-        document.getElementById('page-control').oninput = function() { page(Number(this.value)); };
-        document.getElementById('page-prev').onclick = function() { page(p - 1); };
-        document.getElementById('page-next').onclick = function() { page(p + 1); };
-
-        document.addEventListener('keydown', function(e) {
-            if (isTutorial()) {
-                switch (e.key) {
-                    case 'ArrowLeft': if (p > 1) { page(--p); } break;
-                    case 'ArrowRight': if (p < MAX_PAGE) { page(++p); } break;
-                }
-            }
-        });
-
-        function page(n) {
-            if (isTutorial()) {
-                p = n;
-                document.querySelector('iframe').setAttribute('src', 'tutorial/' + p + '.html');
-                document.getElementById('page-number').innerText = document.getElementById('page-control').value = p;
-                document.getElementById('page-prev').disabled = p === 1;
-                document.getElementById('page-next').disabled = p === MAX_PAGE;
-            }
-        }
-
-        function isTutorial() {
-            return tabBars[1].selected.getAttribute('name') === 'Tutorial';
-        }
-    };
-</script>
-
 <h1 style="margin:.5em; color:lightgrey">
     Hypergrid Cell Formatter &amp; Editor Workbench
 </h1>
 
 <div id="hypergrid" style="height:145px"></div>
 
-<div class="curvy-tabs-container" style="position:absolute;height:calc(100% - 208px); width:calc(50% - 12px); top:200px;">
+<div class="curvy-tabs-container" style="position:absolute; height:calc(100% - 208px); width:calc(50% - 12px); top:200px;">
     <div style="background-color:#dff" name="Data">
-        <input type="button" class="api" value="grid.setData(…)" onclick="callApi('setData', 'data', true)">
-        <span class="feedback">Data has been set</span>
+        <input id="reset-data" type="button" value="Reset" class="danger">
+        <input type="button" class="api" value="grid.setData(…)" onclick="callApi('setData', 'data', 'Data has been set')">
+        <span class="feedback"></span>
         <textarea id="data"></textarea>
     </div>
 
     <div style="background-color:#fdf" name="State">
-        <input type="button" class="api" value="grid.setState(…)" onclick="callApi('setState', 'state', true)">
-        <span class="feedback">State has been added</span>
+        <input id="reset-state" type="button" value="Reset" class="danger">
+        <!--<input type="button" class="api" value="grid.addState(…)" onclick="callApi('addState', 'state', 'State has been added')"
+               title="addState() assigns the members of the state object defined below to grid.properties *without* clearing it first.">-->
+        <input type="button" class="api" value="grid.setState(…)" onclick="callApi('setState', 'state', 'State has been set')"
+         title="setState() deletes all grid.properites’s members and then assigns the members of the state object defined below to it.">
+        <span class="feedback"></span>
         <textarea id="state"></textarea>
     </div>
 
     <div style="background-color:#ffd" name="Localizers">
         <input type="button" value="Locals" class="locals">
         Load: <select id="localizer-dropdown"></select>
+        <input id="reset-localizer" type="button" value="Reset" class="danger" style="display:none"
+         title="Reset this localizer to its default.
+
+(This button only appears for localizers with workbench-supplied defaults.)">
         <input type="button" class="api" value="grid.localization.add(…)">
         <span class="feedback">Saved</span>
         <textarea id="localizer-script"></textarea>
@@ -82,9 +48,21 @@
     <div style="background-color:#ddf" name="Cell Editors">
         <input type="button" value="Locals" class="locals">
         Load: <select id="editor-dropdown"></select>
+        <input id="reset-editor" type="button" value="Reset" class="danger" style="display:none"
+         title="Reset this cell editor to its default.
+
+(This button only appears for cell editors with workbench-supplied defaults.)">
         <input type="button" class="api" value="grid.cellEditors.add(…)">
         <span class="feedback">Saved</span>
         <textarea id="editor-script"></textarea>
+    </div>
+
+    <div style="background-color:#aaa" name="Settings">
+        <h2 style="color: red; text-shadow: 1px 1px 0 yellow;">Danger Zone</h2>
+        <table><tr>
+            <td><input id="reset-all" type="button" value="Reset All" class="danger"></td>
+            <td>This will reset all tabs to their default values, removing all edits, including new custom localizers and cell editors.</td>
+        </tr></table>
     </div>
 </div>
 

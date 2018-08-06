@@ -14,8 +14,9 @@ span.button {
     background-color: #eee;
     border: 1px solid black;
     border-radius: 3px;
-    padding: 1px 3px;
-    font-size: 7pt;
+    padding: 1px 4px;
+    margin: 0 2px;
+    font-size: 8pt;
     font-weight: bold;
 }
 a.code, code {
@@ -46,12 +47,31 @@ h3 {
 }
 h4 {
     color: #333;
-    margin-bottom: .6em;
+    margin-bottom: .3em;
 }
 div.note {
     text-align: center;
     margin: 1em 15%;
     padding: .75em;
-    background-color: ivory;
-    border: 3px orange double;
+    background-color: white;
+    border: 3px #666 double;
+}
+table.footnote {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 .6em;
+}
+table.footnote > caption {
+    text-align: left;
+}
+table.footnote > caption > div {
+    width: 10em;
+    border-bottom: 1px solid black;
+}
+table.footnote td {
+    font-size: smaller;
+    text-align: justify;
+    vertical-align: top;
 }

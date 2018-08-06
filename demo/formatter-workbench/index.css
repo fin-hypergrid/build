@@ -44,11 +44,25 @@ input[type=button].api {
     margin: 6px;
     float: right;
 }
-input[type=button]:hover {
+input[type=button].locals:hover, input[type=button].api:hover {
     background-color: #555;
 }
-input[type=button]:active {
+input[type=button].locals:active, input[type=button].api:active {
     color: #555;
     background-color: white;
     border-color: grey;
+}
+input[type=button].danger {
+    color: red;
+    border-color: red;
+    margin: 9px;
+    border-radius: 4px;
+}
+input[type=button].danger:hover {
+    color: white;
+    background-color: red;
+}
+
+input[type=button].danger:active {
+    background-color: yellow;
 }

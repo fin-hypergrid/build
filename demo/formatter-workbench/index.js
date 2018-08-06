@@ -1,46 +1,132 @@
 'use strict';
 
+var MAX_PAGE = 8;
 var NEW = '(New)';
-
-var grid = new fin.Hypergrid();
-
-putJSON('data', [
-    { symbol: 'APPL', name: 'Apple Inc.', prevclose: 93.13 },
-    { symbol: 'MSFT', name: 'Microsoft Corporation', prevclose: 51.91 },
-    { symbol: 'TSLA', name: 'Tesla Motors Inc.', prevclose: 196.40 },
-    { symbol: 'IBM', name: 'International Business Machines Corp', prevclose: 155.35 }
-]);
-
-callApi('setData', 'data');
-
-putJSON('state', {
-    editable: true,
-    editor: 'textfield',
-    columns: {
-        prevclose: {
-            halign: 'right',
-            format: 'trend'
-        }
-    },
-    showRowNumbers: false
-});
-
-callApi('addState', 'state');
-
-grid.addEventListener('fin-after-cell-edit', function(e) {
-    putJSON('data', grid.behavior.getData());
-});
-
-initLocalsButtons();
-
 var saveFuncs = {
     editor: saveCellEditor,
     localizer: saveLocalizer
 };
+var defaults = {
+    data: [
+        { symbol: 'APPL', name: 'Apple Inc.', prevclose: 93.13 },
+        { symbol: 'MSFT', name: 'Microsoft Corporation', prevclose: 51.91 },
+        { symbol: 'TSLA', name: 'Tesla Motors Inc.', prevclose: 196.40 },
+        { symbol: 'IBM', name: 'International Business Machines Corp', prevclose: 155.35 }
+    ],
+    state: {
+        editable: true,
+        editor: 'textfield',
+        columns: {
+            prevclose: {
+                halign: 'right',
+                format: 'trend'
+            }
+        },
+        showRowNumbers: false
+    }
+};
 
-Object.keys(scripts).forEach(function(key) {
-    initScripts(key);
-});
+var tabBars = [];
+var pageNum;
+var grid;
+
+init();
+
+function init() {
+    grid = new fin.Hypergrid();
+
+    initTabs();
+
+    initTextEditor('data');
+    initTextEditor('state');
+
+    initPagingControls();
+
+    initLocalsButtons();
+
+    Object.keys(scripts).forEach(function(key) {
+        initScripts(key);
+    });
+
+    document.getElementById('reset-all').onclick = function() {
+        if (confirm('Clear localStorage and reload?')) {
+            localStorage.clear();
+            location.reload();
+        }
+    };
+
+    grid.addEventListener('fin-after-cell-edit', function(e) {
+        putJSON('data', grid.behavior.getData());
+    });
+}
+
+function initTabs() {
+    document.querySelectorAll('.curvy-tabs-container').forEach(function(container) {
+        var tabBar = new CurvyTabs(container);
+        tabBar.paint();
+        tabBars.push(tabBar);
+    });
+}
+
+function initTextEditor(type) {
+    document.getElementById(type).value = localStorage.getItem(type);
+    if (!document.getElementById(type).value) {
+        putJSON(type, defaults[type]);
+    }
+    var apiMethodName = 'set' + capitalize(type);
+    callApi(apiMethodName, type);
+
+    document.getElementById('reset-' + type).onclick = resetTextEditor;
+}
+
+function initPagingControls() {
+    var m = document.cookie.match(/\btutorial=(\d+)/);
+    pageNum = m ? Number(m[1]) : 1;
+
+    document.getElementById('page-max').innerText = document.getElementById('page-control').max = MAX_PAGE;
+    page(pageNum, 0);
+    document.getElementById('page-control').oninput = function() { page(Number(this.value)); };
+    document.getElementById('page-prev').onclick = function() { page(pageNum - 1); };
+    document.getElementById('page-next').onclick = function() { page(pageNum + 1); };
+
+    document.addEventListener('keydown', function(e) {
+        if (isTutorial()) {
+            switch (e.key) {
+                case 'ArrowLeft': if (pageNum > 1) { page(--pageNum); } break;
+                case 'ArrowRight': if (pageNum < MAX_PAGE) { page(++pageNum); } break;
+            }
+        }
+    });
+}
+
+function page(n) {
+    if (isTutorial()) {
+        pageNum = n;
+        var d = new Date
+        d.setYear(d.getFullYear() + 1);
+        document.cookie = 'tutorial=' + pageNum + '; expires=' + d.toUTCString(); // remember for next reload
+        document.querySelector('iframe').setAttribute('src', 'tutorial/' + pageNum + '.html');
+        document.getElementById('page-number').innerText = document.getElementById('page-control').value = pageNum;
+        document.getElementById('page-prev').disabled = pageNum === 1;
+        document.getElementById('page-next').disabled = pageNum === MAX_PAGE;
+    }
+}
+
+function isTutorial() {
+    return tabBars[1].selected.getAttribute('name') === 'Tutorial';
+}
+
+function resetTextEditor() {
+    var type = this.id.replace(/^reset-/, '');
+    if (confirm('Reset the ' + capitalize(type) + ' tab editor to its default?')) {
+        localStorage.removeItem(type);
+        initTextEditor(type);
+    }
+}
+
+function capitalize(str) {
+    return str[0].toUpperCase() + str.substr(1);
+}
 
 function initLocalsButton(type, locals) {
     var el = document.getElementById(type + '-dropdown').parentElement.querySelector('.locals');
@@ -58,38 +144,51 @@ function initScripts(type) {
     var scriptList = scripts[type],
         dropdownEl = document.getElementById(type + '-dropdown'),
         scriptEl = document.getElementById(type + '-script'),
-        addButtonEl = dropdownEl.nextElementSibling,
-        save = saveFuncs[type];
+        addButtonEl = dropdownEl.parentElement.querySelector('.api'),
+        prefix = type + '_',
+        save = saveFuncs[type],
+        newScript;
 
+    // STEP 1: Save default scripts to local storage not previously saved
     scriptList.map(extractName).sort().forEach(function(key) {
-        dropdownEl.add(new Option(key));
-        if (key !== NEW) {
-            save(findScript(scriptList, key));
+        var script = scriptList.find(isScriptByName.bind(null, key));
+        if (key === NEW) {
+            dropdownEl.add(new Option(key));
+            newScript = scriptEl.value = script;
+        } else if (!localStorage.getItem(prefix + key)) {
+            localStorage.setItem(prefix + key, script);
         }
     });
 
-    dropdownEl.onchange = function() {
-        scriptEl.value = findScript(scriptList, this.value);
-    };
+    // STEP 2: Load scripts from local storage
+    for (var i=0; i < localStorage.length; ++i) {
+        var key = localStorage.key(i);
+        if (key.substr(0, prefix.length) === prefix) {
+            dropdownEl.add(new Option(key.substr(prefix.length)));
+            save(localStorage.getItem(key), dropdownEl);
+        }
+    }
 
-    dropdownEl.onchange();
+    dropdownEl.onchange = function() {
+        var name = this.value;
+
+        if (name === NEW) {
+            scriptEl.value = newScript;
+            resettable(type);
+        } else {
+            scriptEl.value = localStorage.getItem(prefix + name);
+            resettable(type, name);
+        }
+    };
 
     addButtonEl.onclick = function() {
         save(scriptEl.value, dropdownEl);
-    }
+    };
 }
 
-function findScript(scriptList, name) {
-    return scriptList.find(isScriptByName.bind(null, name));
-}
-
-function saveScript(scriptList, name, script) {
-    var index = scriptList.findIndex(isScriptByName.bind(null, name));
-    if (index >= 0) {
-        scriptList[index] = script;
-    } else {
-        scriptList.push(script);
-    }
+function resettable(type, name) {
+    var hasDefaultScript = name && !!scripts[type].find(isScriptByName.bind(null, name));
+    document.getElementById('reset-' + type).style.display = hasDefaultScript ? null : 'none'; // null reveals start value
 }
 
 function isScriptByName(name, script) {
@@ -106,16 +205,18 @@ function putJSON(key, json) {
         .replace(/(  +)"([a-zA-Z$_]+)"(: )/g, '$1$2$3'); // un-quote keys
 }
 
-function callApi(methodName, id, confirm) {
-    var jsonEl = document.getElementById(id), value;
+function callApi(methodName, id, confirmation) {
+    var jsonEl = document.getElementById(id), value = jsonEl.value;
+
+    localStorage.setItem(id, value);
 
     // L-value must be inside eval because R-value beginning with '{' is eval'd as BEGIN block
     // used eval because JSON.parse rejects unquoted keys
-    eval('value =' + jsonEl.value);
+    eval('value =' + value);
     grid[methodName].call(grid, value);
 
-    if (confirm) {
-        confirmation(jsonEl.parentElement);
+    if (confirmation) {
+        feedback(jsonEl.parentElement, confirmation);
     }
 }
 
@@ -139,7 +240,7 @@ function saveCellEditor(script, select) {
             throw 'Cannot save cell editor "' + name + '" because it is not a subclass of CellEditor (aka grid.cellEditors.BaseClass).';
         }
         if (!name || name === NEW) {
-            throw 'Cannot save cell editor. A `name` property with a value other than "new" is required.';
+            throw 'Cannot save cell editor. A name other than "(New)" is required.';
         }
     } catch (err) {
         console.error(err);
@@ -150,12 +251,14 @@ function saveCellEditor(script, select) {
 
     cellEditors.add(Editor);
 
-    saveScript(scripts.editor, name, script);
+    localStorage.setItem('editor_' + name, script);
 
     addOptionInAlphaOrder(select, name);
 
+    resettable('editor', name);
+
     if (select) {
-        confirmation(select.parentElement);
+        feedback(select.parentElement);
     }
 
     initLocalsButtons();
@@ -179,12 +282,14 @@ function saveLocalizer(script, select) {
         return;
     }
 
-    saveScript(scripts.localizer, name, script);
+    localStorage.setItem('localizer_' + name, script);
 
     addOptionInAlphaOrder(select, name);
 
+    resettable('localizer', name);
+
     if (select) {
-        confirmation(select.parentElement);
+        feedback(select.parentElement);
     }
 }
 
@@ -195,7 +300,9 @@ function addOptionInAlphaOrder(el, text, value) {
 
     var optionEls = Array.prototype.slice.call(el.options);
 
-    if (optionEls.find(function(optionEl) { return optionEl.textContent === text; })) {
+    var index = optionEls.findIndex(function(optionEl) { return optionEl.textContent === text; });
+    if (index >= 0) {
+        el.selectedIndex = index;
         return; // already in dropdown
     }
 
@@ -210,12 +317,12 @@ function addOptionInAlphaOrder(el, text, value) {
     }
 }
 
-function confirmation(content) {
+function feedback(content, confirmation) {
     var el = content.querySelector('span.feedback');
-    var style = el.style;
-    var text = el.innerText;
-    style.display = 'inline';
-    setTimeout(function() {
-        style.display = 'none';
-    }, 750 + 50 * text.length);
+    if (!confirmation) {
+        confirmation = 'Saved';
+    }
+    el.innerText = confirmation;
+    el.style.display = 'inline';
+    setTimeout(function() { el.style.display = 'none'; }, 750 + 50 * confirmation.length);
 }

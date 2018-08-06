@@ -9,15 +9,47 @@
 <h2>Data editor</h2>
 This editor let’s you adjust the data shown in the grid.
 <ul>
-  <li>The initial contents is the actual data shown in the grid instance above it.</li>
+  <li>The data is stored as an array of <code>dataRow</code> objects.</li>
+  <li>The initial contents reflects the actual data shown in the grid instance above it.</li>
   <li>After editing the data, bind it to the grid by clicking <code class="button">grid.setData(…)</code>.</li>
   <li>The grid in turn is bound to the data window: Any edits made to cells (via cell editors) will alter the contents of this editor.</li>
 </ul>
 <p>
   In actual practice, when data is set using <code>setData</code>, it typically has come from a data store, typically as a character string in JSON format.
   If that is the case, you would probably call <code>JSON.parse</code> on it, rather than <code>eval</code>; and pass the result to <code>setData</code>.
+</p>
+<p>
   In this workbench, we’re using straight JavaScript, not JSON, which is why we’re using using <code>eval</code>, not <code>JSON.parse</code>.
   When editing, therefore, you do not have to worry about strict adherence to the JSON standard (double quotes, primitive types, _etc._).
 </p>
+
+<h3>Activity 1: Edit a grid cell; the data tab changes</h3>
+Add a comma between "Apple" and "Inc." in the data tab:
+<ol>
+  <li>Double click "Apple, Inc." in the grid.</li>
+  <li>Remove the comma.</li>
+  <li>Press the <span class="button">enter</span> key.</li>
+  <li>Observe how both the grid cell and the data tab update.</li>
+</ol>
+
+<h3>Activity 2: Edit a value in the data tab; the grid updates</h3>
+Remove the comma from the grid cell:
+<ol>
+  <li>Click the <b>Data</b> tab.</li>
+  <li>Edit the <code>name</code> property in the first (<code>dataRow</code>) object.</li>
+  <li>Click the <span class="button">grid.setData(…)</span> button.</li>
+  <li>Observe how the grid cell updates.</li>
+</ol>
+
+<h3>Activity 3: Add a row in the data tab; the grid updates</h3>
+Add a comma between "Apple" and "Inc.":
+<ol>
+  <li>Click the <b>Data</b> tab.</li>
+  <li>Copy and paste the last (<code>dataRow</code>) object so now there are two of them.</li>
+  <li><em>Optional:</em> Edit the values in the last one to make it distinct.</li>
+  <li>Click the <span class="button">grid.setData(…)</span> button.</li>
+  <li>Observe how the new row is added to the grid, which now has a total of five rows.</li>
+</ol>
+
 </body>
 </html>

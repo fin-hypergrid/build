@@ -1,6 +1,6 @@
 'use strict';
 
-var MAX_PAGE = 8;
+var MAX_PAGE = 19;
 var NEW = '(New)';
 var saveFuncs = {
     editor: saveCellEditor,
@@ -8,34 +8,35 @@ var saveFuncs = {
 };
 var defaults = {
     data: [
-        { symbol: 'APPL', name: 'Apple Inc.', prevclose: 93.13 },
-        { symbol: 'MSFT', name: 'Microsoft Corporation', prevclose: 51.91 },
-        { symbol: 'TSLA', name: 'Tesla Motors Inc.', prevclose: 196.40 },
-        { symbol: 'IBM', name: 'International Business Machines Corp', prevclose: 155.35 }
+        { symbol: 'APPL', name: 'Apple Inc.', prevclose: 93.13, change: .0725 },
+        { symbol: 'MSFT', name: 'Microsoft Corporation', prevclose: 51.91, change: .0125 },
+        { symbol: 'TSLA', name: 'Tesla Motors Inc.', prevclose: 196.40, change: .08 },
+        { symbol: 'IBM', name: 'International Business Machines Corp', prevclose: 155.35, change: .02375 }
     ],
     state: {
-        editable: true,
-        editor: 'textfield',
+        showRowNumbers: false, // override the default (true)
+        editable: true, // included here for clarity; this is the default value
+        editor: 'Textfield', // override the default (undefined)
         columns: {
             prevclose: {
-                halign: 'right',
-                format: 'trend'
+                halign: 'right'
             }
-        },
-        showRowNumbers: false
+        }
     }
 };
 
-var tabBars = [];
 var pageNum;
 var grid;
+var tabBars = [];
+tabBars.editors = 0; // to be replaced with tabBars[0], a reference to the first tab bar
+tabBars.tutorial = 1; // to be replaced with tabBars.tutorial, a reference to the second tab bar
 
 init();
 
 function init() {
     grid = new fin.Hypergrid();
 
-    initTabs();
+    initTabBar();
 
     initTextEditor('data');
     initTextEditor('state');
@@ -45,7 +46,7 @@ function init() {
     initLocalsButtons();
 
     Object.keys(scripts).forEach(function(key) {
-        initScripts(key);
+        initObjectEditor(key);
     });
 
     document.getElementById('reset-all').onclick = function() {
@@ -60,11 +61,17 @@ function init() {
     });
 }
 
-function initTabs() {
-    document.querySelectorAll('.curvy-tabs-container').forEach(function(container) {
+function initTabBar() {
+    document.querySelectorAll('.curvy-tabs-container').forEach(function(container, i) {
         var tabBar = new CurvyTabs(container);
         tabBar.paint();
         tabBars.push(tabBar);
+        Object.keys(tabBars).find(function(key) {
+            if (tabBars[key] === i) {
+                tabBars[key] = tabBar;
+                return true;
+            }
+        });
     });
 }
 
@@ -100,20 +107,38 @@ function initPagingControls() {
 }
 
 function page(n) {
-    if (isTutorial()) {
-        pageNum = n;
-        var d = new Date
-        d.setYear(d.getFullYear() + 1);
-        document.cookie = 'tutorial=' + pageNum + '; expires=' + d.toUTCString(); // remember for next reload
-        document.querySelector('iframe').setAttribute('src', 'tutorial/' + pageNum + '.html');
-        document.getElementById('page-number').innerText = document.getElementById('page-control').value = pageNum;
-        document.getElementById('page-prev').disabled = pageNum === 1;
-        document.getElementById('page-next').disabled = pageNum === MAX_PAGE;
+    if (1 > n || n > MAX_PAGE) {
+        return;
     }
+
+    tabBars.tutorial.select('Tutorial');
+
+    pageNum = n;
+
+    // save page number in a cookie for next visit or reload
+    var d = new Date;
+    d.setYear(d.getFullYear() + 1);
+    document.cookie = 'tutorial=' + pageNum + '; expires=' + d.toUTCString();
+
+    // page transition
+    document.querySelector('iframe').contentWindow.location.href = 'tutorial/' + pageNum + '.html';
+
+    // adjust page panel
+    document.getElementById('page-number').innerText = document.getElementById('page-control').value = pageNum;
+
+    var classList = document.getElementById('page-prev').classList;
+    var method = pageNum === 1 ? 'remove' : 'add';
+    classList[method]('page-button-enabled'); classList[method]('page-button-enabled-prev');
+
+    classList = document.getElementById('page-next').classList;
+    method = pageNum === MAX_PAGE ? 'remove' : 'add';
+    classList[method]('page-button-enabled'); classList[method]('page-button-enabled-next');
 }
 
 function isTutorial() {
-    return tabBars[1].selected.getAttribute('name') === 'Tutorial';
+    var el = document.activeElement;
+    var editingText = el.tagName === 'TEXTAREA' || el.tagName === 'INPUT' && el.type === 'text';
+    return !editingText && tabBars.tutorial.selected.getAttribute('name') === 'Tutorial';
 }
 
 function resetTextEditor() {
@@ -121,6 +146,16 @@ function resetTextEditor() {
     if (confirm('Reset the ' + capitalize(type) + ' tab editor to its default?')) {
         localStorage.removeItem(type);
         initTextEditor(type);
+    }
+}
+
+function resetObjectEditor() {
+    var type = this.id.replace(/^reset-/, '');
+    var key = document.getElementById(type + '-dropdown').value;
+    if (confirm('Reset the "' + key + '" ' + type + ' to its default?')) {
+        var script = scripts[type].find(isScriptByName.bind(null, key));
+        localStorage.setItem(type + '_' + key, script);
+        document.getElementById(type + '-script').value = script;
     }
 }
 
@@ -140,9 +175,10 @@ function initLocalsButtons() {
     initLocalsButton('localizer', ['module', 'exports']);
 }
 
-function initScripts(type) {
+function initObjectEditor(type) {
     var scriptList = scripts[type],
         dropdownEl = document.getElementById(type + '-dropdown'),
+        resetEl = dropdownEl.nextElementSibling,
         scriptEl = document.getElementById(type + '-script'),
         addButtonEl = dropdownEl.parentElement.querySelector('.api'),
         prefix = type + '_',
@@ -160,14 +196,19 @@ function initScripts(type) {
         }
     });
 
-    // STEP 2: Load scripts from local storage
+    // STEP 2: Load scripts from local storage, re-saving each which adds it to drop-down
     for (var i=0; i < localStorage.length; ++i) {
         var key = localStorage.key(i);
         if (key.substr(0, prefix.length) === prefix) {
-            dropdownEl.add(new Option(key.substr(prefix.length)));
             save(localStorage.getItem(key), dropdownEl);
         }
     }
+
+    // STEP 3: Reset drop-down to first item: "(New)"
+    dropdownEl.selectedIndex = 0;
+    resetEl.style.display = 'none';
+
+    resetEl.onclick = resetObjectEditor;
 
     dropdownEl.onchange = function() {
         var name = this.value;
@@ -213,7 +254,13 @@ function callApi(methodName, id, confirmation) {
     // L-value must be inside eval because R-value beginning with '{' is eval'd as BEGIN block
     // used eval because JSON.parse rejects unquoted keys
     eval('value =' + value);
-    grid[methodName].call(grid, value);
+
+    var params = [value];
+    if (methodName === 'setData') {
+        params.push({ schema: [] });
+    }
+
+    grid[methodName].apply(grid, params);
 
     if (confirmation) {
         feedback(jsonEl.parentElement, confirmation);

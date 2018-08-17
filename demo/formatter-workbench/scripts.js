@@ -79,29 +79,28 @@ exports.localizer = [
   // expectation: 'optional string describing valid syntax displayed on error'
 };`,
 
-`var UP = '⬆', DN = '⬇';
-
-var REGEX_VALID = new RegExp('^(\\\\d+(\\\\.(\\\\d+)?)?|\\\\.\\\\d+)[' + DN + UP + ']$');
-var REGEX_NEGATIVE = new RegExp('(^-|' + DN + '$)');
-
-module.exports = {
+`module.exports = {
   name: 'trend',
   format: function(value) {
-    return Math.abs(value).toFixed(2) + (value < 0 ? DN : UP);
+    return Math.abs(value).toFixed(2) + (value < 0 ? '⬇' : '⬆');
   },
   parse: function(str) {
-    var value = parseFloat(str);
+    var m = str.match(/^((\\+?|-)(\\d+(\\.(\\d+)?)?|\\.\\d+)(⬆?|⬇))$/);
     
-    // if (isNaN(value)) { throw new SyntaxError('Expected input to start with a floating point number representation optionally prefixed with a negative sign and/or ending with optional optional down-arrow.'); }
-    
-    if (REGEX_NEGATIVE.test(str)) { value = -Math.abs(value); }
-    
-    return value; 
-  },
-  invalid: function(str) { return !REGEX_VALID.test(str); }
+    if (m) {
+        switch (m[2] + m[6]) {
+          case '-': case '⬇':
+            return -m[3];
+          case '+': case '⬆': case '': 
+            return +m[3];
+        }
+    }
+
+    throw new SyntaxError('Expected a floating point number, optionally prefixed with a sign or suffixed with an arrow.');
+  }
 };`,
 
-`var footInchPattern = /^\s*((((\\d+)')?\\s*((\\d+)")?)|\\d+)\\s*$/;
+`var footInchPattern = /^\\s*((((\\d+)')?\\s*((\\d+)")?)|\\d+)\\s*$/;
 
 module.exports = {
   name: 'ft-in',

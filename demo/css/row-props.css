@@ -18,7 +18,7 @@ input[type=checkbox] { outline: 0 }
 div#behind {
     position: absolute;
     visibility: hidden;
-    top: 150px;
+    top: 350px;
     left: 150px;
     width: 400px;
     height: 400px;
@@ -27,5 +27,11 @@ div#behind {
     background-color: orange;
 }
 input[type=range] {
-    width: 100px
+    width: 100px;
+    height: 12px;
+}
+input[type=color] {
+    width: 12px;
+    height: 12px;
+    padding: 0;
 }

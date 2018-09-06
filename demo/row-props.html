@@ -33,7 +33,7 @@
     <label>
         <input type="checkbox" onclick="simulate(this.checked)">
         sim updates
-        <span id="fps" title="Warning: Chrome's built in FPS meter is not accurate in blast mode (i.e., when not using requestAnimationFrame)."></span>
+        <span id="fps" title="Warning: Chrome's built in FPS meter is not accurate in blast mode (that is, when not using requestAnimationFrame)."></span>
         <input type="range" id="changes" style="width:100px" min="1" max="500" value="1" oninput="this.nextElementSibling.innerHTML=CHANGES=this.value">
         (<span>1</span>)
         <input type="button" onclick="grid.clearAllCellProperties()" value="Clear">

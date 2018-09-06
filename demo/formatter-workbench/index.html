@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+  <title>Hypergrid Cell Formatter &amp; Editor Workbench</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="../tutorial/index.css">
+  <!--<script src="../../../curvy-tabs/build/curvy-tabs.js"></script>-->
+  <script src="https://joneit.github.io/curvy-tabs/2.1.0/build/curvy-tabs.js"></script>
+</head>
+<body>
+
+<h1 style="margin:.5em; color:lightgrey">
+  Hypergrid Cell Formatter &amp; Editor Workbench
+</h1>
+
+<div id="hypergrid" style="height:145px; width:calc(50% - 8px)"></div>
+
+<div class="curvy-tabs-container" style="position:absolute; height:calc(100% - 250px); width:calc(50% - 16px); bottom:8px;">
+  <div style="background-color:#dff" name="Data">
+    <span id="reset-data" title="Reset data to default.
+
+(This icon only appears when the data has been edited.)">
+      <svg viewBox="0 0 32 32" version="1.1" width="22" height="22" style="color:#ddd; vertical-align:middle">
+        <path d="M 15.5 2.09375 L 14.09375 3.5 L 16.59375 6.03125 C 16.394531 6.019531 16.203125 6 16 6 C 10.5 6 6 10.5 6 16 C 6 17.5 6.304688 18.894531 6.90625 20.09375 L 8.40625 18.59375 C 8.207031 17.792969 8 16.898438 8 16 C 8 11.601563 11.601563 8 16 8 C 16.175781 8 16.359375 8.019531 16.53125 8.03125 L 14.09375 10.5 L 15.5 11.90625 L 19.71875 7.71875 L 20.40625 7 L 19.71875 6.28125 Z M 25.09375 11.90625 L 23.59375 13.40625 C 23.894531 14.207031 24 15.101563 24 16 C 24 20.398438 20.398438 24 16 24 C 15.824219 24 15.640625 23.980469 15.46875 23.96875 L 17.90625 21.5 L 16.5 20.09375 L 12.28125 24.28125 L 11.59375 25 L 12.28125 25.71875 L 16.5 29.90625 L 17.90625 28.5 L 15.40625 25.96875 C 15.601563 25.980469 15.804688 26 16 26 C 21.5 26 26 21.5 26 16 C 26 14.5 25.695313 13.105469 25.09375 11.90625 Z "></path>
+      </svg>
+    </span>
+    <input type="button" class="api" value="grid.setData(…)" onclick="callApi('data', 'Data has been set')"
+     title="Note: Actually called with options in a 2nd parameter to reset schema on every call:
+grid.setData(…, { schema: [] })">
+    <span class="feedback"></span>
+    <textarea id="data"></textarea>
+  </div>
+
+  <div style="background-color:#fdf" name="State">
+    <span id="reset-state" style="cursor:pointer;" title="Reset this state object to default.
+
+(This icon only appears when this state object has been edited.)">
+      <svg viewBox="0 0 32 32" version="1.1" width="22" height="22" style="color:#ddd; vertical-align:middle">
+        <path d="M 15.5 2.09375 L 14.09375 3.5 L 16.59375 6.03125 C 16.394531 6.019531 16.203125 6 16 6 C 10.5 6 6 10.5 6 16 C 6 17.5 6.304688 18.894531 6.90625 20.09375 L 8.40625 18.59375 C 8.207031 17.792969 8 16.898438 8 16 C 8 11.601563 11.601563 8 16 8 C 16.175781 8 16.359375 8.019531 16.53125 8.03125 L 14.09375 10.5 L 15.5 11.90625 L 19.71875 7.71875 L 20.40625 7 L 19.71875 6.28125 Z M 25.09375 11.90625 L 23.59375 13.40625 C 23.894531 14.207031 24 15.101563 24 16 C 24 20.398438 20.398438 24 16 24 C 15.824219 24 15.640625 23.980469 15.46875 23.96875 L 17.90625 21.5 L 16.5 20.09375 L 12.28125 24.28125 L 11.59375 25 L 12.28125 25.71875 L 16.5 29.90625 L 17.90625 28.5 L 15.40625 25.96875 C 15.601563 25.980469 15.804688 26 16 26 C 21.5 26 26 21.5 26 16 C 26 14.5 25.695313 13.105469 25.09375 11.90625 Z "></path>
+      </svg>
+    </span>
+    <!--<input type="button" class="api" value="grid.addState(…)" onclick="callApi('addState', 'state', 'State has been added')"
+           title="addState() assigns the members of the state object defined below to grid.properties *without* clearing it first.">-->
+    <input type="button" class="api" value="grid.setState(…)" onclick="callApi('state', 'State has been set')"
+     title="setState() deletes all grid.properites’s members and then assigns the members of the state object defined below to it.">
+    <span class="feedback"></span>
+    <textarea id="state"></textarea>
+  </div>
+
+  <div style="background-color:#ffd" name="Localizers">
+    <input type="button" value="Locals" class="locals">
+    Load: <select id="localizer-dropdown"></select>
+
+    <span id="reset-localizer" style="cursor:pointer;" title="Reset this localizer to its default.
+
+(This icon is only enabled for built in localizers that have been edited.)">
+      <svg viewBox="0 0 32 32" version="1.1" width="22" height="22" style="fill:currentColor; vertical-align:middle">
+        <path d="M 15.5 2.09375 L 14.09375 3.5 L 16.59375 6.03125 C 16.394531 6.019531 16.203125 6 16 6 C 10.5 6 6 10.5 6 16 C 6 17.5 6.304688 18.894531 6.90625 20.09375 L 8.40625 18.59375 C 8.207031 17.792969 8 16.898438 8 16 C 8 11.601563 11.601563 8 16 8 C 16.175781 8 16.359375 8.019531 16.53125 8.03125 L 14.09375 10.5 L 15.5 11.90625 L 19.71875 7.71875 L 20.40625 7 L 19.71875 6.28125 Z M 25.09375 11.90625 L 23.59375 13.40625 C 23.894531 14.207031 24 15.101563 24 16 C 24 20.398438 20.398438 24 16 24 C 15.824219 24 15.640625 23.980469 15.46875 23.96875 L 17.90625 21.5 L 16.5 20.09375 L 12.28125 24.28125 L 11.59375 25 L 12.28125 25.71875 L 16.5 29.90625 L 17.90625 28.5 L 15.40625 25.96875 C 15.601563 25.980469 15.804688 26 16 26 C 21.5 26 26 21.5 26 16 C 26 14.5 25.695313 13.105469 25.09375 11.90625 Z "></path>
+      </svg>
+    </span>
+
+    <span id="delete-localizer" title="Delete this localizer.
+
+(This icon only appears for custom localizers you added yourself.)">
+      <svg viewBox="0 0 12 16" version="1.1" width="12" height="16" style="fill:currentColor; vertical-align: middle;">
+        <path fill-rule="evenodd" d="M11 2H9c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1H2c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1v9c0 .55.45 1 1 1h7c.55 0 1-.45 1-1V5c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H3V5h1v8h1V5h1v8h1V5h1v8h1V5h1v9zm1-10H2V3h9v1z"></path>
+      </svg>
+    </span>
+
+    <!--    <input id="reset-localizer" type="button" value="Reset" class="danger"
+         title="Reset this localizer to its default.
+
+(This button only appears for localizers with workbench-supplied defaults.)">
+        <input id="delete-localizer" type="button" value="Delete" class="danger"
+               title="Delete this localizer.
+
+(This button only appears for custom localizers you added yourself.)">-->
+    <input type="button" class="api" value="grid.localization.add(…)">
+    <span class="feedback">Saved</span>
+    <textarea id="localizer-script"></textarea>
+  </div>
+
+  <div style="background-color:#ddf" name="Cell Editors">
+    <input type="button" value="Locals" class="locals">
+    Load: <select id="editor-dropdown"></select>
+
+    <span id="reset-editor" title="Reset this cell editor to its default.
+
+(This icon is only enabled for built in cell editors that have been edited.)">
+      <svg viewBox="0 0 32 32" version="1.1" width="22" height="22" style="fill:currentColor; vertical-align:middle">
+        <path d="M 15.5 2.09375 L 14.09375 3.5 L 16.59375 6.03125 C 16.394531 6.019531 16.203125 6 16 6 C 10.5 6 6 10.5 6 16 C 6 17.5 6.304688 18.894531 6.90625 20.09375 L 8.40625 18.59375 C 8.207031 17.792969 8 16.898438 8 16 C 8 11.601563 11.601563 8 16 8 C 16.175781 8 16.359375 8.019531 16.53125 8.03125 L 14.09375 10.5 L 15.5 11.90625 L 19.71875 7.71875 L 20.40625 7 L 19.71875 6.28125 Z M 25.09375 11.90625 L 23.59375 13.40625 C 23.894531 14.207031 24 15.101563 24 16 C 24 20.398438 20.398438 24 16 24 C 15.824219 24 15.640625 23.980469 15.46875 23.96875 L 17.90625 21.5 L 16.5 20.09375 L 12.28125 24.28125 L 11.59375 25 L 12.28125 25.71875 L 16.5 29.90625 L 17.90625 28.5 L 15.40625 25.96875 C 15.601563 25.980469 15.804688 26 16 26 C 21.5 26 26 21.5 26 16 C 26 14.5 25.695313 13.105469 25.09375 11.90625 Z "></path>
+      </svg>
+    </span>
+
+    <span id="delete-editor" title="Delete this cell editor.
+
+(This icon is only enabled for custom cell editors you added yourself.)">
+      <svg viewBox="0 0 12 16" version="1.1" width="12" height="16" style="color:#ddd; fill:currentColor; vertical-align: middle;">
+        <path fill-rule="evenodd" d="M11 2H9c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1H2c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1v9c0 .55.45 1 1 1h7c.55 0 1-.45 1-1V5c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H3V5h1v8h1V5h1v8h1V5h1v8h1V5h1v9zm1-10H2V3h9v1z"></path>
+      </svg>
+    </span>
+
+    <!--
+        <input id="reset-editor" type="button" value="Reset" class="danger"
+         title="Reset this cell editor to its default.
+
+(This button only appears for cell editors with workbench-supplied defaults.)">
+        <input id="delete-editor" type="button" value="Delete" class="danger"
+               title="Delete this cell editor.
+
+(This button only appears for custom cell editors you added yourself.)">
+    -->
+    <input type="button" class="api" value="grid.cellEditors.add(…)">
+    <span class="feedback">Saved</span>
+    <textarea id="editor-script"></textarea>
+  </div>
+
+  <div style="background-color:#aaa" name="Settings">
+    <h2 style="color: red; text-shadow: 1px 1px 0 yellow;">Danger Zone</h2>
+    <table><tr>
+      <td><input id="reset-all" type="button" value="Reset All" class="danger"></td>
+      <td>This will reset all tabs to their default values, removing all edits, including new custom localizers and cell editors.</td>
+    </tr></table>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="curvy-tabs-container" style="position:absolute; height:calc(100% - 58px); width:calc(50% - 12px); bottom:8px; right:8px">
+  <div style="background-color:#f4f4f4" name="Tutorial">
+    <iframe></iframe>
+  </div>
+
+  <div style="background-color:#ffc; display:none" name="Code Snippets">
+    <iframe src="tutorial/code-snippets.html"></iframe>
+  </div>
+</div>
+
+<div id="page-panel" style="position:absolute; top:50px; right:24px; font: 10pt sans-serif;">
+  <div id="scroll-warning" style="position:absolute; top:-28px; font-size:8pt; color:#d00; text-align:center; left:0; right:0; opacity:0">
+    Scroll tutorial to bottom before<br>
+    proceeding to next page.
+  </div>
+  <span id="page-prev" class="page-button page-button-enabled" title="Click to go to previous page (or press left-arrow key)">&#x25c0;</span>
+  Page
+  <input id="page-control" type="range" style="width:50px; margin-left:.5em" min="1" max="3" value="1">
+  <b id="page-number" class="page-num"></b>
+  of
+  <b id="page-max" class="page-num"></b>
+  <span id="page-next" class="page-button page-button-enabled" title="Click to go to next page (or press right-arrow key)">&#x25ba;</span>
+</div>
+
+<script src="../build/fin-hypergrid.js"></script>
+
+<script>var exports = {}, module = {exports:exports};</script>
+<script src="scripts.js"></script>
+<script>var scripts = module.exports; delete window.exports; delete window.module;</script>
+
+<script src="../tutorial/index.js"></script>
+<script src="index.js"></script>
+
+</body>
+</html>

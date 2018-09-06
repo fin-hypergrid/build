@@ -1,0 +1,40 @@
+/* CONTENT I-FRAMES */
+
+.curvy-tabs-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100% + 16px); /* 16px is to ignore the 8px left and right padding of the container */
+    border: 0;
+}
+
+/* PAGE NUMBER CONTROLS */
+
+.page-num {
+    display: inline-block;
+    width: 2em;
+    text-align: center;
+}
+.page-button {
+    color: #d8d8d8;
+    user-select: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    padding: 3px 5px 1px 5px;
+}
+.page-button-enabled-prev, .page-button-enabled-next {
+    color: black;
+}
+.page-button-enabled:hover, .page-button-enabled:active {
+    border: 1px solid grey;
+}
+.page-button-enabled-prev:active {
+    padding-left: 3px;
+    padding-right: 7px;
+}
+.page-button-enabled-next:active {
+    padding-left: 7px;
+    padding-right: 3px;
+}

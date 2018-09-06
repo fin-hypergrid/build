@@ -3,4 +3,4 @@
 /demo/build
 /demo/hypermod
 /node_modules
-/package-lock.json
+#/package-lock.json

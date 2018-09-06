@@ -65,7 +65,7 @@ exports.localizer = [
 
 `module.exports = {
   name: '(New)',
-  format: function(value) {
+  format: function(val) {
     var str;
     str = val; // replace this line with formatting logic
     return str;

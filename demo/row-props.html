@@ -33,7 +33,7 @@
     <label>
         <input type="checkbox" onclick="simulate(this.checked)">
         sim updates
-        <span id="fps" title="Warning: Chrome's built in FPS meter is not accurate in blast mode (i.e., when not using requestAnimationFrame)."></span>
+        <span id="fps" title="Warning: Chrome's built in FPS meter is not accurate in blast mode (that is, when not using requestAnimationFrame)."></span>
         <input type="range" id="changes" style="width:100px" min="1" max="500" value="1" oninput="this.nextElementSibling.innerHTML=CHANGES=this.value">
         (<span>1</span>)
         <input type="button" onclick="grid.clearAllCellProperties()" value="Clear">
@@ -209,11 +209,11 @@ Renders all cells over consolidated row backgrounds, if any. Unsuitable as a cli
     <div class="radio-group">
         Horiz. rules:
         <input type="checkbox" checked oninput="grid.properties.gridLinesH=this.checked;grid.behavior.shapeChanged()">
-        <input type="color" value="brown" onchange="grid.properties.gridLinesHColor=this.value;grid.behavior.shapeChanged()">
+        <input type="color" value="#A32B2E" onchange="grid.properties.gridLinesHColor=this.value;grid.behavior.shapeChanged()">
         <input type="range" min="0" max="8" value="1" style="width:24px" oninput="nextElementSibling.innerHTML=grid.properties.gridLinesHWidth=Number(this.value);grid.behavior.shapeChanged()"> (<span>1</span>)
         Vert. rules:
         <input type="checkbox" checked oninput="grid.properties.gridLinesV=this.checked;grid.behavior.shapeChanged()">
-        <input type="color" value="brown" onchange="grid.properties.gridLinesVColor=this.value;grid.behavior.shapeChanged()">
+        <input type="color" value="#A32B2E" onchange="grid.properties.gridLinesVColor=this.value;grid.behavior.shapeChanged()">
         <input type="range" min="0" max="8" value="1" style="width:24px" oninput="nextElementSibling.innerHTML=grid.properties.gridLinesVWidth=Number(this.value);grid.behavior.shapeChanged()"> (<span>1</span>)
         Box model:
         <label title="grid.properties.backgroundColor='white'">

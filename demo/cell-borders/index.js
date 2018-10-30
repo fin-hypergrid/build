@@ -1,5 +1,7 @@
 window.addEventListener('load', function() {
 
+    document.querySelector('body > div:first-child > span').textContent = fin.Hypergrid.prototype.version;
+
     var data = [
         { symbol: 'APPL', prevclose: 93.13, name: 'Apple Inc.' },
         { symbol: 'MSFT', prevclose: 51.91, name: 'Microsoft Corporation' },

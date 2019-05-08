@@ -87,6 +87,8 @@ module.exports = function() {
                 halign: 'center',
                 format: 'number',
                 calculator: 'Add10',
+                // could also be an entire stringified function (named or anonymous) which will be normalized, such as:
+                // calculator: 'function(dataRow, columnName, subrow) { var val = dataRow[columnName]; if (val.constructor === Array) { val = val[subrow]; } return val + 100; }'
                 color: 'green'
             },
 

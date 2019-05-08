@@ -27,4 +27,8 @@ fi
 git commit -m $1
 git push upstream gh-pages
 
+git checkout demo doc
 git checkout master
+rm -fdr $1
+mkdir umd
+cp ../build/demo/build/fin-hypergrid* umd

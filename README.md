@@ -37,7 +37,7 @@ open https://fin-hypergrid.github.io/core/demo/M.m.p/multiple-grids.html # speci
 ```
 Notes:
 1. The `https://fin-hypergrid.github.io/core/demo` folder is a symlink to the latest version folder (same for `doc` folder)
-2. `M.m.p` (<major>.<minor>.<patch>) stands for an actual version number (such as `3.2.1`)
+2. `M.m.p` (<major>.<minor>.<patch>) stands for an actual version number (such as `3.3.0`)
 2. The `open` command only works on mac OS. For other OS's, paste the URL into your browser address bar
 
 The Hypergrid bundled build files always require an explicit version number and can be found in `core/M.m.p/build/fin-hypergrid.js`. See the [CDN index](https://fin-hypergrid.github.io#index) for details.
@@ -197,7 +197,7 @@ The first and only script param is the target version number in M.m.p format (no
 #### Run the script
 Example:
 ```bash
-sh ../build/push-to-cdn.sh 3.2.1
+sh ../build/push-to-cdn.sh 3.3.0
 ```
 
 ### Hypergrid core development

@@ -1,6 +1,6 @@
 {
   "name": "build",
-  "version": "3.2.1",
+  "version": "3.3.2",
   "description": "Hypergrid Build & Demos",
   "main": "fin-hypergrid/index.js",
   "scripts": {
@@ -19,7 +19,7 @@
   "homepage": "https://github.com/fin-hypergrid/build#readme",
   "dependencies": {
     "datasaur-local": "^3.0.0",
-    "fin-hypergrid": "=3.2.1",
+    "fin-hypergrid": "=3.3.2",
     "fin-hypergrid-event-logger": "^1.0.4"
   }
 }
